@@ -117,6 +117,94 @@ public class UserRepository {
 				.getResultList();
 	}
 	
+	// ========================= 취미 추가 =========================
+	
+	
+	// 대분류, 소분류 모두 존재
+	public void addHobbyReg(Long user_idx, Long hobby_idx) {
+		em.createNativeQuery("INSERT INTO user_hobby_list (user_idx, hobby_idx, search_flag) " + 
+							"VALUES (:user_idx, :hobby_idx, :search_flag)")
+				.setParameter("user_idx", user_idx)
+				.setParameter("hobby_idx", hobby_idx)
+				.setParameter("search_flag", "N")
+				.executeUpdate();
+	}
+
+	// 대분류나 소분류 존재 X
+	public void addHobbyIl(Long user_idx, Long hobby_idx) {
+		em.createNativeQuery("INSERT INTO user_hobby_list (user_idx, hobby_search_idx, search_flag) " + 
+							"VALUES (:user_idx, :hobby_idx, :search_flag)")
+				.setParameter("user_idx", user_idx)
+				.setParameter("hobby_idx", hobby_idx)
+				.setParameter("search_flag", "Y")
+				.executeUpdate();
+	}
+	
+	public List<Long> getHobbySearchIdx(Long user_hobby_cat_big_idx, String user_hobby_cat_big_name, String user_hobby_cat_small_name) {
+		return em.createQuery("SELECT uhs.user_hobby_search_idx FROM UserHobbySearch uhs WHERE " + 
+							"uhs.user_hobby_cat_big_idx = :user_hobby_cat_big_idx AND " + 
+							"uhs.user_hobby_cat_big_name = :user_hobby_cat_big_name AND " + 
+							"uhs.user_hobby_cat_small_name = :user_hobby_cat_small_name", Long.class)
+				.setParameter("user_hobby_cat_big_idx", user_hobby_cat_big_idx)
+				.setParameter("user_hobby_cat_big_name", user_hobby_cat_big_name)
+				.setParameter("user_hobby_cat_small_name", user_hobby_cat_small_name)
+				.setFirstResult(0)
+				.setMaxResults(1)
+				.getResultList();
+	}
+	
+	// 대분류를 hobby_search테이블에서 찾는다.
+	public List<Long> searchBigHobbyTag(Long user_hobby_cat_big_idx, String user_hobby_cat_big_name) {
+		return em.createQuery("SELECT uhs.user_hobby_cat_big_idx FROM UserHobbySearch uhs WHERE " + 
+						"uhs.user_hobby_cat_big_idx = :user_hobby_cat_big_idx AND " + 
+						"uhs.user_hobby_cat_big_name = :user_hobby_cat_big_name", Long.class)
+				.setParameter("user_hobby_cat_big_idx", user_hobby_cat_big_idx)
+				.setParameter("user_hobby_cat_big_name", user_hobby_cat_big_name)
+				.setFirstResult(0)
+				.setMaxResults(1)
+				.getResultList();
+	}
+	
+	// 소분류를 hobby_search테이블에서 찾는다.
+	public List<Long> searchSmallHobbyTag(Long user_hobby_cat_big_idx, String user_hobby_cat_big_name, String user_hobby_cat_small_name) {
+		return em.createQuery("SELECT uhs.user_hobby_search_idx FROM UserHobbySearch uhs WHERE " + 
+						"uhs.user_hobby_cat_big_idx = :user_hobby_cat_big_idx AND " + 
+						"uhs.user_hobby_cat_big_name = :user_hobby_cat_big_name AND " + 
+						"uhs.user_hobby_cat_small_name = :user_hobby_cat_small_name", Long.class)
+				.setParameter("user_hobby_cat_big_idx", user_hobby_cat_big_idx)
+				.setParameter("user_hobby_cat_big_name", user_hobby_cat_big_name)
+				.setParameter("user_hobby_cat_small_name", user_hobby_cat_small_name)
+				.setFirstResult(0)
+				.setMaxResults(1)
+				.getResultList();
+	}
+	
+	// hobby_search 테이블에 추가
+	public void addHobbySearchNew(Long user_hobby_cat_big_idx, String user_hobby_cat_big_name, String user_hobby_cat_small_name) {
+		em.createNativeQuery("INSERT INTO user_hobby_search (count, user_hobby_cat_big_idx, user_hobby_cat_big_name, user_hobby_cat_small_name) " + 
+						"VALUES (:count, :user_hobby_cat_big_idx, :user_hobby_cat_big_name, :user_hobby_cat_small_name)")
+				.setParameter("count", 1)
+				.setParameter("user_hobby_cat_big_idx", user_hobby_cat_big_idx)
+				.setParameter("user_hobby_cat_big_name", user_hobby_cat_big_name)
+				.setParameter("user_hobby_cat_small_name", user_hobby_cat_small_name)
+				.executeUpdate();
+	}
+	
+	// hobby_search 테이블에서 count 추가
+	public void addHobbySearchAlready(Long user_hobby_cat_big_idx, String user_hobby_cat_big_name, String user_hobby_cat_small_name) {
+		em.createQuery("UPDATE UserHobbySearch uhs SET uhs.count = uhs.count + :count WHERE " + 
+						"uhs.user_hobby_cat_big_idx = :user_hobby_cat_big_idx AND " + 
+						"uhs.user_hobby_cat_big_name = :user_hobby_cat_big_name AND " + 
+						"uhs.user_hobby_cat_small_name = :user_hobby_cat_small_name")
+				.setParameter("count", 1)
+				.setParameter("user_hobby_cat_big_idx", user_hobby_cat_big_idx)
+				.setParameter("user_hobby_cat_big_name", user_hobby_cat_big_name)
+				.setParameter("user_hobby_cat_small_name", user_hobby_cat_small_name)
+				.executeUpdate();
+	}
+	
+	// ===========================================================
+	
 	public void deleteDeviceValidation(String code_type, String user_device) {
 		em.createQuery("DELETE FROM UserValidation uv " + 
 				"WHERE uv.validation_flag = :validation_flag AND uv.user_device = :user_device")

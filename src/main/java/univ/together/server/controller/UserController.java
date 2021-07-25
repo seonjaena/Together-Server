@@ -111,7 +111,7 @@ public class UserController {
 	
 	@PostMapping(value = "/add_hobby")
 	public void addHobby(@RequestBody AddHobbyDto addHobbyDto) {
-		
+		userService.addHobby(addHobbyDto);
 	}
 	
 	@GetMapping(value = "/invitationList")

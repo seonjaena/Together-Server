@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
+import univ.together.server.dto.AddHobbyDto;
 import univ.together.server.dto.AddPrivateScheduleDto;
 import univ.together.server.dto.ChangeProfilePhotoDto;
 import univ.together.server.dto.ChangePwDto;
@@ -506,6 +507,46 @@ public class UserService {
 	// 취미 리스트를 가져온다.
 	public List<EditHobbyDto> editHobby() {
 		return userRepository.getHobbyList().stream().map(hl -> new EditHobbyDto(hl)).collect(Collectors.toList());
+	}
+	
+	// 사용자의 취미를 추가한다.
+	@Transactional
+	public void addHobby(AddHobbyDto addHobbyDto) {
+		
+		// 대분류, 소분류 모두 존재
+		if(addHobbyDto.getBig_idx() != -1 && addHobbyDto.getSmall_idx() != -1) {
+			userRepository.addHobbyReg(addHobbyDto.getUser_idx(), addHobbyDto.getSmall_idx());
+		}
+		
+		// 대분류만 존재
+		if(addHobbyDto.getBig_idx() != -1 && addHobbyDto.getSmall_idx() == -1) {
+			List<Long> hobby_idxes = userRepository.searchSmallHobbyTag(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name());
+			if(hobby_idxes.size() == 0) {
+				userRepository.addHobbySearchNew(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name());
+			}else {
+				userRepository.addHobbySearchAlready(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name());
+			}
+			Long search_idx = userRepository.getHobbySearchIdx(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name()).get(0);
+			userRepository.addHobbyIl(addHobbyDto.getUser_idx(), search_idx);
+		}
+		
+		// 대분류, 소분류 모두 존재 X
+		if(addHobbyDto.getBig_idx() == -1 && addHobbyDto.getSmall_idx() == -1) {
+			List<Long> hobby_idxes_big = userRepository.searchBigHobbyTag(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name());
+			if(hobby_idxes_big.size() == 0) {
+				userRepository.addHobbySearchNew(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name());
+			}else {
+				List<Long> hobby_idxes_small = userRepository.searchSmallHobbyTag(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name());
+				if(hobby_idxes_small.size() == 0) {
+					userRepository.addHobbySearchNew(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name());
+				}else {
+					userRepository.addHobbySearchAlready(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name());
+				}
+			}
+			Long search_idx = userRepository.getHobbySearchIdx(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name()).get(0);
+			userRepository.addHobbyIl(addHobbyDto.getUser_idx(), search_idx);
+		}
+		
 	}
 	
 	@Transactional
