@@ -203,6 +203,16 @@ public class UserRepository {
 				.executeUpdate();
 	}
 	
+	// return value
+	public List<UserHobbyList> getAddHobbyReturnValue(Long user_idx) {
+		return em.createQuery("SELECT uhl FROM UserHobbyList uhl LEFT OUTER JOIN FETCH uhl.hobby_idx LEFT OUTER JOIN FETCH uhl.hobby_search_idx WHERE " + 
+						"uhl.user_idx.user_idx = :user_idx ORDER BY uhl.user_hobby_idx DESC", UserHobbyList.class)
+				.setParameter("user_idx", user_idx)
+				.setFirstResult(0)
+				.setMaxResults(1)
+				.getResultList();
+	}
+	
 	// ===========================================================
 	
 	public void deleteDeviceValidation(String code_type, String user_device) {

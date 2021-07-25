@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import univ.together.server.dto.AddHobbyDto;
+import univ.together.server.dto.AddHobbyReturnDto;
 import univ.together.server.dto.AddPrivateScheduleDto;
 import univ.together.server.dto.ChangeProfilePhotoDto;
 import univ.together.server.dto.ChangePwDto;
@@ -511,7 +512,7 @@ public class UserService {
 	
 	// 사용자의 취미를 추가한다.
 	@Transactional
-	public void addHobby(AddHobbyDto addHobbyDto) {
+	public AddHobbyReturnDto addHobby(AddHobbyDto addHobbyDto) {
 		
 		// 대분류, 소분류 모두 존재
 		if(addHobbyDto.getBig_idx() != -1 && addHobbyDto.getSmall_idx() != -1) {
@@ -546,7 +547,7 @@ public class UserService {
 			Long search_idx = userRepository.getHobbySearchIdx(addHobbyDto.getBig_idx(), addHobbyDto.getBig_name(), addHobbyDto.getSmall_name()).get(0);
 			userRepository.addHobbyIl(addHobbyDto.getUser_idx(), search_idx);
 		}
-		
+		return new AddHobbyReturnDto(userRepository.getAddHobbyReturnValue(addHobbyDto.getUser_idx()).get(0));
 	}
 	
 	@Transactional

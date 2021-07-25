@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddHobbyDto;
+import univ.together.server.dto.AddHobbyReturnDto;
 import univ.together.server.dto.AddPrivateScheduleDto;
 import univ.together.server.dto.AddProjectScheduleDto;
 import univ.together.server.dto.ChangeProfilePhotoDto;
@@ -110,8 +111,8 @@ public class UserController {
 	}
 	
 	@PostMapping(value = "/add_hobby")
-	public void addHobby(@RequestBody AddHobbyDto addHobbyDto) {
-		userService.addHobby(addHobbyDto);
+	public AddHobbyReturnDto addHobby(@RequestBody AddHobbyDto addHobbyDto) {
+		return userService.addHobby(addHobbyDto);
 	}
 	
 	@GetMapping(value = "/invitationList")
