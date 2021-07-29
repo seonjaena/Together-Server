@@ -17,5 +17,6 @@ public class TeamMatchingDto {
 	private String professionality;
 	private String project_type;
 	private int member_num;
-	private int mbti_flag;
+	private String mbti;
+	
 }

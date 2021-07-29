@@ -71,7 +71,7 @@ public class ProjectService {
 		// 멤버를 INSERT하는 기능(나선재 작성)
 		projectRepository.saveMember(projectdto.getUser_idx(), pid);
 		for(int i=0; i<projectdto.getTag_num(); i++)
-			projectRepository.insertProjectTag(pid, projectdto.getTag_idx()[i]);
+			projectRepository.insertProjectTag(pid, projectdto.getTag_name()[i],projectdto.getDetail_name()[i]);
 		
 	}
 	

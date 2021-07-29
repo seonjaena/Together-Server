@@ -1,6 +1,7 @@
 package univ.together.server.dto;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -39,9 +40,10 @@ public class ProjectDto {
 	
 	private int tag_num;
 	
-	private Long tag_idx[] = new Long[tag_num];
+	private String tag_name[] = new String[tag_num];
 	
-	
+	private String detail_name[] = new String[tag_num];
 	// 대분류 기타 소분류 기타일때  -   게임(롤 배그 스타 etc-> 기타) 낚시 
 	
 }
+

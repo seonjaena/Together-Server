@@ -200,10 +200,25 @@ public class ProjectRepository {
 		return em.createQuery("SELECT t FROM TagList t",TagList.class).getResultList();
 	}
 	
-	public void insertProjectTag(Long pid, Long tid){
-		em.createNativeQuery("INSERT INTO project_tag(project_idx, tag_idx) VALUES (:pid , : tid)")
-		.setParameter("pid", pid)
-		.setParameter("tid", tid)
-		.executeUpdate();
+	public void insertProjectTag(Long pid, String tag_name, String detail_name){
+		Long tid;
+		try {
+		tid = em.createQuery("SELECT t.tag_idx FROM TagList t WHERE t.tag_name =:tag_name t.tag_detail_name =:detail_name",Long.class)
+		.setParameter("detail_name", detail_name)
+		.setParameter("tag_name", tag_name)
+		.getSingleResult();
+		}catch(Exception e) {
+			tid = (long) 0;
+		}
+		
+		if(tid == 0) {
+			em.createNativeQuery("INSERT INTO tag_search VALUES(:search_name, :search_detail_name)")
+			.setParameter("search_name", tag_name)
+			.setParameter("search_detail_name", detail_name);
+		}
+		
+		em.createNativeQuery("INSERT INTO project_tag VALUES(:pid, :tag_idx)").setParameter("pid", pid).setParameter("tag_idx", tid);
 	}
+	
+		
 }
