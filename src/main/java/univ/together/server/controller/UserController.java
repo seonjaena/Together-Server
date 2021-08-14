@@ -24,6 +24,7 @@ import univ.together.server.dto.ChangeProfilePhotoDto;
 import univ.together.server.dto.ChangePwDto;
 import univ.together.server.dto.CheckUserInfoForChangePwDto;
 import univ.together.server.dto.DecideJoinProjectDto;
+import univ.together.server.dto.EditDetailProfile;
 import univ.together.server.dto.EditHobbyDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
@@ -113,6 +114,11 @@ public class UserController {
 	@PostMapping(value = "/add_hobby")
 	public AddHobbyReturnDto addHobby(@RequestBody AddHobbyDto addHobbyDto) {
 		return userService.addHobby(addHobbyDto);
+	}
+	
+	@PostMapping(value = "/edit_detail_profile")
+	public void editDetailProfile(@RequestBody EditDetailProfile editDetailProfile) {
+		userService.editDetailProfile(editDetailProfile);
 	}
 	
 	@GetMapping(value = "/invitationList")

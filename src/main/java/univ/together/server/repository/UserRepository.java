@@ -1,6 +1,7 @@
 package univ.together.server.repository;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -119,7 +120,6 @@ public class UserRepository {
 	
 	// ========================= 취미 추가 =========================
 	
-	
 	// 대분류, 소분류 모두 존재
 	public void addHobbyReg(Long user_idx, Long hobby_idx) {
 		em.createNativeQuery("INSERT INTO user_hobby_list (user_idx, hobby_idx, search_flag) " + 
@@ -211,6 +211,39 @@ public class UserRepository {
 				.setFirstResult(0)
 				.setMaxResults(1)
 				.getResultList();
+	}
+	
+	// ===========================================================
+	
+	// ======================== 프로필 수정 =========================
+	
+	// 생년월일 수정
+	public void editDetailProfileBirth(LocalDate user_birth, Long user_idx) {
+		em.createQuery("UPDATE User u SET u.user_birth = :user_birth WHERE u.user_idx = :user_idx AND u.delete_flag = :delete_flag")
+				.setParameter("user_birth", user_birth)
+				.setParameter("user_idx", user_idx)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
+	}
+	
+	// 자격증 수정
+	public void editDetailProfileLicense(String license1, String license2, String license3, Long user_idx) {
+		em.createQuery("UPDATE User u SET u.license1 = :license1, u.license2 = :license2, u.license3 = :license3 WHERE u.user_idx = :user_idx AND u.delete_flag = :delete_flag")
+				.setParameter("license1", license1)
+				.setParameter("license2", license2)
+				.setParameter("license3", license3)
+				.setParameter("user_idx", user_idx)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
+	}
+	
+	// MBTI 수정
+	public void editDetailProfileMbti(Integer mbti_idx, Long user_idx) {
+		em.createQuery("UPDATE User u SET u.user_mbti.mbti_idx = :mbti_idx WHERE u.user_idx = :user_idx AND u.delete_flag = :delete_flag")
+				.setParameter("mbti_idx", mbti_idx)
+				.setParameter("user_idx", user_idx)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
 	}
 	
 	// ===========================================================

@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import univ.together.server.dto.ChangeProfilePhotoDto;
 import univ.together.server.dto.ChangePwDto;
 import univ.together.server.dto.CheckUserInfoForChangePwDto;
 import univ.together.server.dto.DecideJoinProjectDto;
+import univ.together.server.dto.EditDetailProfile;
 import univ.together.server.dto.EditHobbyDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
@@ -548,6 +550,50 @@ public class UserService {
 			userRepository.addHobbyIl(addHobbyDto.getUser_idx(), search_idx);
 		}
 		return new AddHobbyReturnDto(userRepository.getAddHobbyReturnValue(addHobbyDto.getUser_idx()).get(0));
+	}
+	
+	// 생년월일, 자격증, MBTI 수정
+	@Transactional
+	public void editDetailProfile(EditDetailProfile editDetailProfile) {
+		
+		String flag = editDetailProfile.getFlag();
+		String value = editDetailProfile.getValue();
+		Long user_idx = editDetailProfile.getUser_idx();
+		
+		if(flag.equals("birth")) {
+			LocalDate user_birth = LocalDate.parse(value, DateTimeFormatter.ISO_DATE);
+			userRepository.editDetailProfileBirth(user_birth, user_idx);
+		}else if(flag.equals("license")) {
+			
+			Long count = value.chars().filter(c -> c == ',').count();
+			String license1 = null;
+			String license2 = null;
+			String license3 = null;
+			
+			if(value.length() >= 2) {
+				if(count == 0L) {
+					license1 = value;
+				}else if(count == 1L) {
+					license1 = value.substring(0, value.indexOf(','));
+					license2 = value.substring(value.indexOf(',') + 1, value.length());
+				}else if(count == 2L) {
+					license1 = value.substring(0, value.indexOf(','));
+					license2 = value.substring(value.indexOf(',') + 1, value.lastIndexOf(','));
+					license3 = value.substring(value.lastIndexOf(',') + 1, value.length());
+				}
+			}
+			
+			if(license1 != null && license1.trim().equals("")) license1 = null;
+			if(license2 != null && license2.trim().equals("")) license2 = null;
+			if(license3 != null && license3.trim().equals("")) license3 = null;
+			
+			userRepository.editDetailProfileLicense(license1, license2, license3, user_idx);
+			
+		}else if(flag.equals("mbti")) {
+			Integer user_mbti = Integer.parseInt(value);
+			if(user_mbti >= 18 || user_mbti <= 0) user_mbti = 17;
+			userRepository.editDetailProfileMbti(user_mbti, user_idx);
+		}
 	}
 	
 	@Transactional
