@@ -25,6 +25,7 @@ import univ.together.server.dto.ChangePwDto;
 import univ.together.server.dto.CheckUserInfoForChangePwDto;
 import univ.together.server.dto.DecideJoinProjectDto;
 import univ.together.server.dto.EditDetailProfile;
+import univ.together.server.dto.EditEmailPhoneDto;
 import univ.together.server.dto.EditHobbyDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
@@ -32,6 +33,8 @@ import univ.together.server.dto.MyPageMainDto;
 import univ.together.server.dto.PrivateScheduleListDto;
 import univ.together.server.dto.ShowInvitationDto;
 import univ.together.server.dto.UserProfileDto;
+import univ.together.server.dto.ValidationEditEmailDto;
+import univ.together.server.dto.ValidationEditPhoneDto;
 import univ.together.server.service.UserService;
 import univ.together.server.validator.JoinValidator;
 
@@ -120,6 +123,42 @@ public class UserController {
 	public void editDetailProfile(@RequestBody EditDetailProfile editDetailProfile) {
 		userService.editDetailProfile(editDetailProfile);
 	}
+	
+	// ================ 이메일 + 전화번호 수정 ================
+	
+	// 이메일 중복 검사 + 이메일 인증 코드 전송
+	@PostMapping(value = "/validationEditEmail")
+	public String validationEditEmail(@RequestBody ValidationEditEmailDto validationEditEmailDto) {
+		String code = "";
+		if(userService.validUserIdx(validationEditEmailDto.getUser_idx(), validationEditEmailDto.getUser_email(), "E").trim().equals("true")) {
+			code = userService.checkEmail(validationEditEmailDto.getUser_email().trim());
+			if(code.equals("permit")) userService.sendMail(validationEditEmailDto.getUser_email().trim());
+		}
+		return code;
+	}
+	
+	// 전화번호 중복 검사 + 전화번호 인증 코드 전송
+	@PostMapping(value = "/validationEditPhone")
+	public String validationEditPhone(@RequestBody ValidationEditPhoneDto validationEditphoneDto) {
+		String code = "";
+		if(userService.validUserIdx(validationEditphoneDto.getUser_idx(), validationEditphoneDto.getUser_phone(), "P").trim().equals("true")) {
+			code = userService.checkPhone(validationEditphoneDto.getUser_phone().trim());
+			if(code.equals("permit")) userService.sendSMS(validationEditphoneDto.getUser_phone().trim());
+		}
+		return code;
+	}
+		
+	// 이메일 or 전화번호 수정
+	@PostMapping(value = "/editEmailPhone")
+	public String editEmailPhone(@RequestBody EditEmailPhoneDto editEmailPhoneDto) {
+		String code = "";
+		if(editEmailPhoneDto.getCode().trim().equals("true")) {
+			code = userService.editEmailPhone(editEmailPhoneDto.getType(), editEmailPhoneDto.getValue(), editEmailPhoneDto.getUser_idx());
+		}
+		return code;
+	}
+		
+	// ===================================================
 	
 	@GetMapping(value = "/invitationList")
 	public List<ShowInvitationDto> getInvitationList(@RequestParam(name = "user_idx") Long user_idx) {

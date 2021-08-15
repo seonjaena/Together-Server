@@ -4,6 +4,7 @@ package univ.together.server.repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
@@ -246,6 +247,24 @@ public class UserRepository {
 				.executeUpdate();
 	}
 	
+	// 전화번호 수정
+	public void editDetailProfilePhone(String phone, Long user_idx) {
+		em.createQuery("UPDATE User u SET u.user_phone = :phone WHERE u.user_idx = :user_idx AND u.delete_flag = :delete_flag")
+				.setParameter("phone", phone)
+				.setParameter("user_idx", user_idx)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
+	}
+	
+	// 이메일 수정
+	public void editDetailProfileEmail(String email, Long user_idx) {
+		em.createQuery("UPDATE User u SET u.user_email = :email WHERE u.user_idx = :user_idx AND u.delete_flag = :delete_flag")
+				.setParameter("phone", email)
+				.setParameter("user_idx", user_idx)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
+	}
+	
 	// ===========================================================
 	
 	public void deleteDeviceValidation(String code_type, String user_device) {
@@ -336,6 +355,20 @@ public class UserRepository {
 	
 	// ====================================== 초대 수락/거부 기능 END ======================================
 	
+	
+	// 사용자 idx 확인(이메일)
+	public Long validUserIdxEmail(String value) {
+		return em.createQuery("SELECT u.user_idx FROM User u WHERE u.user_email = :value", Long.class)
+				.setParameter("value", value)
+				.getSingleResult();
+	}
+	
+	// 사용자 idx 확인(전화번호)
+	public Long validUserIdxPhone(String value) {
+		return em.createQuery("SELECT u.user_idx FROM User u WHERE u.user_phone = :value", Long.class)
+				.setParameter("value", value)
+				.getSingleResult();
+	}
 	
 	// ====================================== 서비스 최근 이용 날짜가 190일이 넘은 유저를 비활성화 한다. ======================================
 	public List<User> getNotDeletedUsers() {
