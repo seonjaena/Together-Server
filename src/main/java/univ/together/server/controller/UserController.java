@@ -130,10 +130,8 @@ public class UserController {
 	@PostMapping(value = "/validationEditEmail")
 	public String validationEditEmail(@RequestBody ValidationEditEmailDto validationEditEmailDto) {
 		String code = "";
-		if(userService.validUserIdx(validationEditEmailDto.getUser_idx(), validationEditEmailDto.getUser_email(), "E").trim().equals("true")) {
-			code = userService.checkEmail(validationEditEmailDto.getUser_email().trim());
-			if(code.equals("permit")) userService.sendMail(validationEditEmailDto.getUser_email().trim());
-		}
+		code = userService.checkEmail(validationEditEmailDto.getUser_email().trim());
+		if(code.equals("permit")) userService.sendMail(validationEditEmailDto.getUser_email().trim());
 		return code;
 	}
 	
@@ -141,10 +139,8 @@ public class UserController {
 	@PostMapping(value = "/validationEditPhone")
 	public String validationEditPhone(@RequestBody ValidationEditPhoneDto validationEditphoneDto) {
 		String code = "";
-		if(userService.validUserIdx(validationEditphoneDto.getUser_idx(), validationEditphoneDto.getUser_phone(), "P").trim().equals("true")) {
-			code = userService.checkPhone(validationEditphoneDto.getUser_phone().trim());
-			if(code.equals("permit")) userService.sendSMS(validationEditphoneDto.getUser_phone().trim());
-		}
+		code = userService.checkPhone(validationEditphoneDto.getUser_phone().trim());
+		if(code.equals("permit")) userService.sendSMS(validationEditphoneDto.getUser_phone().trim());
 		return code;
 	}
 		

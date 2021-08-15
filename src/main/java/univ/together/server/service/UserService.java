@@ -613,26 +613,6 @@ public class UserService {
 		return code;
 	}
 	
-	// user idx 확인
-	public String validUserIdx(Long user_idx, String value, String type) {
-		String code = "";
-		Long new_idx = null;
-		try {
-			
-			if(type.equals("P")) new_idx = userRepository.validUserIdxPhone(value);
-			else if(type.equals("E")) new_idx = userRepository.validUserIdxEmail(value);
-			else throw new Exception();
-			
-			if(new_idx != null && user_idx == new_idx) code = "true";
-			else throw new Exception();
-			
-		}catch(Exception e) {
-			code = "";
-			e.printStackTrace();
-		}
-		return code;
-	}
-	
 	@Transactional
 	@Scheduled(cron = "0 30 3 * * *")
 	public void inactivateAndDeleteUsers() {

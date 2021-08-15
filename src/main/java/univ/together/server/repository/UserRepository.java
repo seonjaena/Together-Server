@@ -354,21 +354,7 @@ public class UserRepository {
 	}
 	
 	// ====================================== 초대 수락/거부 기능 END ======================================
-	
-	
-	// 사용자 idx 확인(이메일)
-	public Long validUserIdxEmail(String value) {
-		return em.createQuery("SELECT u.user_idx FROM User u WHERE u.user_email = :value", Long.class)
-				.setParameter("value", value)
-				.getSingleResult();
-	}
-	
-	// 사용자 idx 확인(전화번호)
-	public Long validUserIdxPhone(String value) {
-		return em.createQuery("SELECT u.user_idx FROM User u WHERE u.user_phone = :value", Long.class)
-				.setParameter("value", value)
-				.getSingleResult();
-	}
+
 	
 	// ====================================== 서비스 최근 이용 날짜가 190일이 넘은 유저를 비활성화 한다. ======================================
 	public List<User> getNotDeletedUsers() {
