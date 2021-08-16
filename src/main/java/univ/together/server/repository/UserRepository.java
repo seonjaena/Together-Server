@@ -259,7 +259,7 @@ public class UserRepository {
 	// 이메일 수정
 	public void editDetailProfileEmail(String email, Long user_idx) {
 		em.createQuery("UPDATE User u SET u.user_email = :email WHERE u.user_idx = :user_idx AND u.delete_flag = :delete_flag")
-				.setParameter("phone", email)
+				.setParameter("email", email)
 				.setParameter("user_idx", user_idx)
 				.setParameter("delete_flag", "N")
 				.executeUpdate();
