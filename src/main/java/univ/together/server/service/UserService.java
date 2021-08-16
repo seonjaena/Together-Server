@@ -613,6 +613,16 @@ public class UserService {
 		return code;
 	}
 	
+	// 닉네임 수정
+	@Transactional
+	public String editNickname(String user_nickname, Long user_idx) {
+		String code = "";
+		int executeRow = userRepository.editNickname(user_nickname, user_idx);
+		if(executeRow == 1) code = "success";
+		else code = "fail";
+		return code;
+	}
+	
 	@Transactional
 	@Scheduled(cron = "0 30 3 * * *")
 	public void inactivateAndDeleteUsers() {

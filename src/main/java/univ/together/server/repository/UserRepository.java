@@ -265,6 +265,15 @@ public class UserRepository {
 				.executeUpdate();
 	}
 	
+	// 닉네임 수정
+	public int editNickname(String user_nickname, Long user_idx) {
+		return em.createQuery("UPDATE User u SET u.user_nickname = :user_nickname WHERE u.user_idx = :user_idx AND u.delete_flag = :delete_flag")
+				.setParameter("user_nickname", user_nickname)
+				.setParameter("user_idx", user_idx)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
+	}
+	
 	// ===========================================================
 	
 	public void deleteDeviceValidation(String code_type, String user_device) {

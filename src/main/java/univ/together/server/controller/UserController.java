@@ -27,6 +27,7 @@ import univ.together.server.dto.DecideJoinProjectDto;
 import univ.together.server.dto.EditDetailProfile;
 import univ.together.server.dto.EditEmailPhoneDto;
 import univ.together.server.dto.EditHobbyDto;
+import univ.together.server.dto.EditNicknameDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
 import univ.together.server.dto.MyPageMainDto;
@@ -155,6 +156,14 @@ public class UserController {
 	}
 		
 	// ===================================================
+	
+	// 닉네임 변경
+	@PostMapping(value = "/editNickname")
+	public String editNickname(@RequestBody EditNicknameDto editNicknameDto) {
+		String code = "fail";
+		code = userService.editNickname(editNicknameDto.getUser_nickname(), editNicknameDto.getUser_idx());
+		return code;
+	}
 	
 	@GetMapping(value = "/invitationList")
 	public List<ShowInvitationDto> getInvitationList(@RequestParam(name = "user_idx") Long user_idx) {
