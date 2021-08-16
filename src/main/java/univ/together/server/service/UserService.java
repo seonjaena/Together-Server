@@ -79,9 +79,9 @@ public class UserService {
 		String raw_phone = joinUserDto.getUser_phone();
 		int pos1 = raw_phone.indexOf("-");
 		int pos2 = raw_phone.lastIndexOf("-");
-		String phone = raw_phone.substring(0, pos1) + raw_phone.substring(pos1 + 1, pos2) + raw_phone.substring(pos2 + 1, raw_phone.length());
-		
-		joinUserDto.setUser_phone(phone);
+//		String phone = raw_phone.substring(0, pos1) + raw_phone.substring(pos1 + 1, pos2) + raw_phone.substring(pos2 + 1, raw_phone.length());
+//		
+//		joinUserDto.setUser_phone(phone);
 		joinUserDto.setUser_pw(passwordEncoder.encode(joinUserDto.getUser_pw()));
 		User user = User.createJoinUser(joinUserDto.getUser_email(), joinUserDto.getUser_pw(), 
 				joinUserDto.getUser_name(), joinUserDto.getUser_nickname(), 
@@ -193,7 +193,6 @@ public class UserService {
 				
 				// 모든 검사를 완료하면 상태 플래그는 permit으로 변경
 				code = "permit";
-				
 			}catch(Exception e) {
 				code = "not_phone";
 			}
@@ -203,7 +202,7 @@ public class UserService {
 		// 상태 플래그가 permit이면 휴대폰이 중복되는지 확인
 		if(code.equals("permit")) {
 			try {
-				String origin_user_phone = userRepository.checkEmail(user_phone);
+				String origin_user_phone = userRepository.checkPhone(user_phone);
 				code = origin_user_phone == null ? "permit" : "duplication";
 			}catch(Exception e) {
 				code = "permit";
@@ -602,6 +601,12 @@ public class UserService {
 		String code = "";
 		if(type.equals("P")) {
 			code = "success";
+			
+//			String raw_phone = value;
+//			int pos1 = raw_phone.indexOf("-");
+//			int pos2 = raw_phone.lastIndexOf("-");
+//			value = raw_phone.substring(0, pos1) + raw_phone.substring(pos1 + 1, pos2) + raw_phone.substring(pos2 + 1, raw_phone.length());
+//			
 			userRepository.editDetailProfilePhone(value, user_idx);
 		}
 		else if(type.equals("E")) {
