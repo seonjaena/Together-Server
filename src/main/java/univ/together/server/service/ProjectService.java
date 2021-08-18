@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
@@ -16,7 +15,7 @@ import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInfoDto;
 import univ.together.server.dto.ProjectScheduleDto;
 import univ.together.server.model.Project;
-import univ.together.server.model.ProjectSchedule;
+
 import univ.together.server.model.TagList;
 import univ.together.server.repository.ProjectRepository;
 

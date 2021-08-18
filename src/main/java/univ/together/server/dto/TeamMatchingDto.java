@@ -11,7 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TeamMatchingDto {
 	private Long user_idx;
-	private String Tag;
+	private int tag_num;
+	private String tag[] = new String[tag_num];
+	private String detail[] = new String[tag_num];
 	private LocalDate start_date;
 	private LocalDate end_date;
 	private String professionality;

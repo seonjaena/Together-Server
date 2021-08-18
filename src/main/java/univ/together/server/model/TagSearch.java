@@ -24,5 +24,8 @@ public class TagSearch {
 	
 	@Column(name = "SEARCH_NAME")
 	private String search_name;
+	
+	@Column(name = "SEARCH_DETAIL_NAME")
+	private String search_detail_name;
 
 }

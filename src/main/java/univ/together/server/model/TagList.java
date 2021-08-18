@@ -20,7 +20,7 @@ public class TagList {
 	@Id
 	@Column(name = "TAG_IDX")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long tag_idx;
+	private Long tag_idx;
 	
 	@Column(name = "TAG_NAME")
 	private String tag_name;

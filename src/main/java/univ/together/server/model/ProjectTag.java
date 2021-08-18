@@ -30,7 +30,11 @@ public class ProjectTag {
 	@JoinColumn(name = "PROJECT_IDX")
 	private Project project_idx;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TAG_IDX")
 	private TagList tag_idx;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TAG_SEARCH_IDX")
+	private TagSearch tag_search_idx;
 }
