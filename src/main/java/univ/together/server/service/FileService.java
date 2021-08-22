@@ -46,7 +46,7 @@ public class FileService {
 		String file_hashed_name = passwordEncoder.encode(uploadfiledto.getFile_origin_name());
 		// 파일 확장자
 		String file_extension = uploadfiledto.getFile_extension();
-		String file_path = "C:\\Together\\" + uploadfiledto.getProject_idx();
+		String file_path = "/usr/local/Together/" + uploadfiledto.getProject_idx();
 		String file_name = file_hashed_name + "v1" + "." + uploadfiledto.getFile_extension();
 
 //		java.nio.file.Files folder = new java.nio.file.Files(file_path);

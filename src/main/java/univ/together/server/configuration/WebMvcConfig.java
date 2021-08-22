@@ -9,10 +9,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Override
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/images/**")
+//                .addResourceLocations("file:///C:/univ_project_image/");
+//
+//    }
+	
+	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:///C:/univ_project_image/");
+                .addResourceLocations("file:///usr/local/univ_project_image/");
 
     }
 

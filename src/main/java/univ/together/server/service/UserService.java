@@ -410,7 +410,7 @@ public class UserService {
 	public ChangeProfilePhotoDto changePhoto(ChangeProfilePhotoDto changeProfilePhotoDto) {
 		String code = "";
 		
-		String absolutePath = "C:\\univ_project_image\\";
+		String absolutePath = "/usr/local/univ_project_image/";
 		int ext_pos = changeProfilePhotoDto.getPhoto().getOriginalFilename().lastIndexOf(".");
 		String ext = changeProfilePhotoDto.getPhoto().getOriginalFilename().substring(ext_pos, changeProfilePhotoDto.getPhoto().getOriginalFilename().length());
 		String file_name = System.currentTimeMillis() + "_" + changeProfilePhotoDto.getPhoto().getOriginalFilename();
@@ -433,7 +433,7 @@ public class UserService {
 	
 		if(code.equals("success")) {
 			changeProfilePhotoDto.setCode(code);
-			changeProfilePhotoDto.setUser_profile_photo("http://10.0.2.2:8080/images/" + file_name);
+			changeProfilePhotoDto.setUser_profile_photo("http://101.101.216.93:8080/images/" + file_name);
 		}else {
 			changeProfilePhotoDto.setCode(code);
 			changeProfilePhotoDto.setUser_profile_photo(null);
