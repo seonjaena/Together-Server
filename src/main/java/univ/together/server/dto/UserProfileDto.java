@@ -43,7 +43,7 @@ public class UserProfileDto {
 		this.user_nickname = user.getUser_nickname();
 		
 		if(user.getUser_profile_photo() != null) {
-			this.user_profile_photo = "http://10.0.2.2:8080/images/" + user.getUser_profile_photo();
+			this.user_profile_photo = "http://101.101.216.93:8080/images/" + user.getUser_profile_photo();
 		}
 		
 		if(user.getAddress() != null) {
