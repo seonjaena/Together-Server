@@ -9,10 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckUserInfoForChangePwDto {
+public class FindIdDto {
 
 	private String user_name;
-	private String user_email;
 	private String user_phone;
 	
 }

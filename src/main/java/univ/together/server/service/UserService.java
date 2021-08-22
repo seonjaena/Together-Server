@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+
 import org.json.simple.JSONObject;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,9 +28,11 @@ import univ.together.server.dto.AddPrivateScheduleDto;
 import univ.together.server.dto.ChangeProfilePhotoDto;
 import univ.together.server.dto.ChangePwDto;
 import univ.together.server.dto.CheckUserInfoForChangePwDto;
+import univ.together.server.dto.CheckUserInfoForFindIdDto;
 import univ.together.server.dto.DecideJoinProjectDto;
 import univ.together.server.dto.EditDetailProfile;
 import univ.together.server.dto.EditHobbyDto;
+import univ.together.server.dto.FindIdDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
 import univ.together.server.dto.MyPageMainDto;
@@ -365,41 +368,94 @@ public class UserService {
 		return userRepository.getInvitationList(user_idx).stream().map(i -> new ShowInvitationDto(i)).collect(Collectors.toList());
 	}
 	
-	// 사용자의 비밀번호 변경을 위해 정보를 비교한다.
-	public String checkInfoForChangePw(CheckUserInfoForChangePwDto checkInfoDto) {
+	// ID찾기를 위해 정보를 검증한다.
+	public String checkInfoForFindId(CheckUserInfoForFindIdDto checkInfoDto) {
 		
 		String user_name = checkInfoDto.getUser_name();
-		String user_email = checkInfoDto.getUser_email();
-		String user_pw = checkInfoDto.getUser_pw();
+		String user_phone = checkInfoDto.getUser_phone();
 		
-		String pw = "";
 		String code = "";
 		
 		try {
-			pw = userRepository.getPwByEmail(user_email);
+			Long user_idx = userRepository.checkInfoForFindId(user_name, user_phone);
+			code = "success";
+			if(user_idx == null) code = "fail";
 		}catch(Exception e) {
-			return "fail";
+			code = "fail";
 		}
 		
-		if(passwordEncoder.matches(user_pw, pw)) {
-			Long user_idx = userRepository.getUserIdxByEmail(user_email);
-			String name = userRepository.getUserNameByIdx(user_idx);
-			if(user_name.equals(name)) code = "success";
-			else code = "fail";
-		}else {
-			code = "fail";
+		
+		if(code.equals("success")) {
+			try {
+				sendSMS(user_phone); // 사용자의 핸드폰에 SMS 메시지를 보낸다.
+			}catch(Exception e) {
+				code = "fail";
+			}
 		}
 		
 		return code;
 		
 	}
 	
-	// 사용자의 비밀번호를 변경해준다.
+	// ID찾기
+	@Transactional
+	public String findUserId(FindIdDto findIdDto) {
+		
+		String user_email = "";
+		String user_name = findIdDto.getUser_name();
+		String user_phone = findIdDto.getUser_phone();
+		
+		try {
+			user_email = userRepository.findUserId(user_name, user_phone);
+		}catch(Exception e) {
+			user_email = "";
+			e.printStackTrace();
+		}
+			
+		return user_email;
+	}
+	
+	// PW변경을 위해 정보를 비교한다.
+	public String checkInfoForChangePw(CheckUserInfoForChangePwDto checkInfoDto) {
+		
+		String user_name = checkInfoDto.getUser_name();
+		String user_email = checkInfoDto.getUser_email();
+		String user_phone = checkInfoDto.getUser_phone();
+		
+		String code = "";
+		
+		try {
+			Long user_idx = userRepository.checkInfoForChangePw(user_name, user_email, user_phone);
+			code = "success";
+			if(user_idx == null) code = "fail";
+		}catch(Exception e) {
+			return "fail";
+		}
+		
+		if(code.equals("success")) {
+			try {
+				sendSMS(user_phone); // 사용자의 핸드폰에 SMS 메시지를 보낸다.
+			}catch(Exception e) {
+				code = "fail";
+			}
+		}
+		
+		return code;
+		
+	}
+	
+	// PW변경
 	@Transactional
 	public String changeUserPw(ChangePwDto changePwDto) {
 		String code = "fail";
+		
+		String user_pw = changePwDto.getUser_pw();
+		String user_name = changePwDto.getUser_name();
+		String user_email = changePwDto.getUser_email();
+		String user_phone = changePwDto.getUser_phone();
+		
 		if(changePwDto.getUser_pw().equals(changePwDto.getUser_pw2())) {
-			int rowNum = userRepository.changeUserPw(changePwDto.getUser_pw(), changePwDto.getUser_idx());
+			int rowNum = userRepository.changeUserPw(user_pw, user_name, user_email, user_phone);
 			if(rowNum == 1) code = "success";
 		}
 		return code;

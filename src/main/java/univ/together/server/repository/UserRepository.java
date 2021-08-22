@@ -33,6 +33,28 @@ public class UserRepository {
 				.executeUpdate();
 	}
 	
+	public Long checkInfoForFindId(String user_name, String user_phone) {
+		return em.createQuery("SELECT u.user_idx FROM User u WHERE " + 
+							"u.user_name = :user_name AND u.user_phone = :user_phone AND u.delete_flag = :delete_flag", Long.class)
+				.setParameter("user_name", user_phone)
+				.setParameter("user_phone", user_phone)
+				.setParameter("delete_flag", "N")
+				.getSingleResult();
+	}
+	
+	public Long checkInfoForChangePw(String user_name, String user_email, String user_phone) {
+		return em.createQuery("SELECT u.user_idx FROM User u WHERE " + 
+							"u.user_name = :user_name AND " + 
+							"u.user_phone = :user_phone AND " + 
+							"u.user_email = :user_email AND " + 
+							"u.delete_flag = :delete_flag", Long.class)
+				.setParameter("user_name", user_phone)
+				.setParameter("user_phone", user_phone)
+				.setParameter("user_email", user_phone)
+				.setParameter("delete_flag", "N")
+				.getSingleResult();
+	}
+	
 	public String getPwByEmail(String user_email) {
 		return em.createQuery("SELECT u.user_pw FROM User u WHERE u.user_email = :user_email AND u.delete_flag = :delete_flag", String.class)
 				.setParameter("user_email", user_email)
@@ -299,12 +321,27 @@ public class UserRepository {
 				.getResultList();
 	}
 	
-	public int changeUserPw(String user_pw, Long user_idx) {
+	public String findUserId(String user_name, String user_phone) {
+		return em.createQuery("SELECT u.user_email FROM User u WHERE " + 
+							"u.user_name = :user_name AND " + 
+							"u.user_phone = :user_phone AND " + 
+							"u.delete_flag = :delete_flag", String.class)
+				.setParameter("user_name", user_name)
+				.setParameter("user_phone", user_phone)
+				.setParameter("delete_flag", "N")
+				.getSingleResult();
+	}
+	
+	public int changeUserPw(String user_pw, String user_name, String user_email, String user_phone) {
 		return em.createQuery("UPDATE User u SET u.user_pw = :user_pw " + 
-							"WHERE u.user_idx = :user_idx " + 
+							"WHERE u.user_name = :user_name AND " + 
+							"u.user_email = :user_email AND " + 
+							"u.user_phone = :user_phone AND " + 
 							"AND u.delete_flag = :delete_flag")
+				.setParameter("user_name", user_name)
+				.setParameter("user_email", user_email)
+				.setParameter("user_phone", user_phone)
 				.setParameter("user_pw", user_pw)
-				.setParameter("user_idx", user_idx)
 				.setParameter("delete_flag", "N")
 				.executeUpdate();
 	}

@@ -23,11 +23,13 @@ import univ.together.server.dto.AddProjectScheduleDto;
 import univ.together.server.dto.ChangeProfilePhotoDto;
 import univ.together.server.dto.ChangePwDto;
 import univ.together.server.dto.CheckUserInfoForChangePwDto;
+import univ.together.server.dto.CheckUserInfoForFindIdDto;
 import univ.together.server.dto.DecideJoinProjectDto;
 import univ.together.server.dto.EditDetailProfile;
 import univ.together.server.dto.EditEmailPhoneDto;
 import univ.together.server.dto.EditHobbyDto;
 import univ.together.server.dto.EditNicknameDto;
+import univ.together.server.dto.FindIdDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
 import univ.together.server.dto.MyPageMainDto;
@@ -170,15 +172,36 @@ public class UserController {
 		return userService.getInvitationList(user_idx);
 	}
 	
+	// =================== ID찾기, PW변경 ===================
+	
+	// ID찾기를 위한 검증 + SMS메시지 보내기
+	@PostMapping(value = "/checkInfoForFindId")
+	public String checkInfoForFindId(@RequestBody CheckUserInfoForFindIdDto checkInfoDto) {
+		return userService.checkInfoForFindId(checkInfoDto);
+	}
+	
+	// ID찾기
+	@PostMapping(value = "/findUserId")
+	public String findUserId(@RequestBody FindIdDto findIdDto) {
+		return userService.findUserId(findIdDto);
+	}
+	
+	// PW변경을 위한 검증 + SMS메시지 보내기
 	@PostMapping(value = "/checkInfoForChangePw")
 	public String checkInfoForChangePw(@RequestBody CheckUserInfoForChangePwDto checkInfoDto) {
 		return userService.checkInfoForChangePw(checkInfoDto);
 	}
 	
+	// PW변경
 	@PostMapping(value = "/changePw")
-	public String changePw(@RequestBody ChangePwDto changePwDto) {
+	public String changePw(@Valid @RequestBody ChangePwDto changePwDto, BindingResult result) {
+		if(result.hasErrors()) {
+			return "fail";
+		}
 		return userService.changeUserPw(changePwDto);
 	}
+	
+	// ====================================================
 	
 	@PostMapping(value = "/changePhoto")
 	public ChangeProfilePhotoDto changePhoto(@ModelAttribute(name = "changeProfilePhotoDto") ChangeProfilePhotoDto changeProfilePhotoDto) {
