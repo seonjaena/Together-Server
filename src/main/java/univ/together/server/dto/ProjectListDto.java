@@ -37,7 +37,11 @@ public class ProjectListDto {
 		this.file_num = member.getProject_idx().getFiles().size();
 		Project project = member.getProject_idx();
 		for(Member members : project.getMembers()) {
-			user_profile_photoes.add("http://101.101.216.93:8080/images/" + members.getUser_idx().getUser_profile_photo());
+			if(!(members.getUser_idx().getUser_profile_photo() == null || members.getUser_idx().getUser_profile_photo().equals("null"))) {
+				user_profile_photoes.add("http://101.101.216.93:8080/images/" + members.getUser_idx().getUser_profile_photo());
+			}else {
+				user_profile_photoes.add(null);
+			}
 		}
 	}
 
