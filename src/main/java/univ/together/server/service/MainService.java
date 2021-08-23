@@ -18,10 +18,9 @@ public class MainService {
 	private final MainRepository mainRepository;
 	
 	public List<ProjectListDto> findProjectByUserIdx(Long user_idx) {
+		
 		// 유저 idx를 통해 속한 프로젝트들의 정보(이름, 멤버 수)를 가져온다.
-		
-		return mainRepository.findProjectByUserIdx(user_idx).stream().map(p -> new ProjectListDto(p)).collect(Collectors.toList());
-		
+		return mainRepository.findProjectByUserIdx(user_idx).stream().map(m -> new ProjectListDto(m)).collect(Collectors.toList());
 		
 	}
 	

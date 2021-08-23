@@ -69,6 +69,10 @@ public class Project {
 	@JsonIgnore
 	private List<ProjectSchedule> projectSchedules = new ArrayList<ProjectSchedule>();
 	
+	@OneToMany(mappedBy = "project_idx")
+	@JsonIgnore
+	private List<File> files = new ArrayList<File>();
+	
 	@Builder
 	public Project(String project_name, String project_status, String project_exp, LocalDate start_date, 
 			LocalDate end_date, String professionality, String project_type, String open_flag) {

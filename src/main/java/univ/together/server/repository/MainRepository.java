@@ -6,8 +6,9 @@ import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Repository;
 
+
 import lombok.RequiredArgsConstructor;
-import univ.together.server.model.Project;
+import univ.together.server.model.Member;
 
 @Repository
 @RequiredArgsConstructor
@@ -15,11 +16,14 @@ public class MainRepository {
 
 	private final EntityManager em;
 	
-	public List<Project> findProjectByUserIdx(Long user_idx) {
-		return em.createQuery("SELECT m.project_idx FROM Member m " + 
-						"WHERE m.user_idx.user_idx = :user_idx", Project.class)
+	public List<Member> findProjectByUserIdx(Long user_idx) {
+		
+		return em.createQuery("SELECT m FROM Member m " + 
+						"JOIN FETCH m.project_idx " + 
+						"WHERE m.user_idx.user_idx = :user_idx", Member.class)
 			.setParameter("user_idx", user_idx)
 			.getResultList();
-	}
 
+	}
+	
 }
