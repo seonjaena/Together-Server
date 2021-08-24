@@ -113,7 +113,7 @@ public class User {
 		user.setLast_logined_datetime(LocalDateTime.now());
 		user.setModified_datetime(LocalDateTime.now());
 		user.setEnable_flag("Y");
-		user.setUser_profile_photo("http://101.101.216.93:8080/images/basic_picture.png");
+		user.setUser_profile_photo("basic_picture.png");
 		return user;
 	}
 	
