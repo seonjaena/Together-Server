@@ -457,6 +457,7 @@ public class UserService {
 		String user_phone = changePwDto.getUser_phone();
 		
 		if(changePwDto.getUser_pw().equals(changePwDto.getUser_pw2())) {
+			user_pw = passwordEncoder.encode(user_pw);
 			int rowNum = userRepository.changeUserPw(user_pw, user_name, user_email, user_phone);
 			if(rowNum == 1) code = "success";
 		}
