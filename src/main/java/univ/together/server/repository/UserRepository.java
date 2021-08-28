@@ -337,7 +337,7 @@ public class UserRepository {
 							"WHERE u.user_name = :user_name AND " + 
 							"u.user_email = :user_email AND " + 
 							"u.user_phone = :user_phone AND " + 
-							"AND u.delete_flag = :delete_flag")
+							"u.delete_flag = :delete_flag")
 				.setParameter("user_name", user_name)
 				.setParameter("user_email", user_email)
 				.setParameter("user_phone", user_phone)
