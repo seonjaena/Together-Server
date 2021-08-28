@@ -417,6 +417,7 @@ public class UserService {
 	}
 	
 	// PW변경을 위해 정보를 비교한다.
+	@Transactional
 	public String checkInfoForChangePw(CheckUserInfoForChangePwDto checkInfoDto) {
 		
 		String user_name = checkInfoDto.getUser_name();
