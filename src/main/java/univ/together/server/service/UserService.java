@@ -369,6 +369,7 @@ public class UserService {
 	}
 	
 	// ID찾기를 위해 정보를 검증한다.
+	@Transactional
 	public String checkInfoForFindId(CheckUserInfoForFindIdDto checkInfoDto) {
 		
 		String user_name = checkInfoDto.getUser_name();
