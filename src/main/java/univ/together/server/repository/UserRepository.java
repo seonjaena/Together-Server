@@ -36,7 +36,7 @@ public class UserRepository {
 	public Long checkInfoForFindId(String user_name, String user_phone) {
 		return em.createQuery("SELECT u.user_idx FROM User u WHERE " + 
 							"u.user_name = :user_name AND u.user_phone = :user_phone AND u.delete_flag = :delete_flag", Long.class)
-				.setParameter("user_name", user_phone)
+				.setParameter("user_name", user_name)
 				.setParameter("user_phone", user_phone)
 				.setParameter("delete_flag", "N")
 				.getSingleResult();
@@ -48,9 +48,9 @@ public class UserRepository {
 							"u.user_phone = :user_phone AND " + 
 							"u.user_email = :user_email AND " + 
 							"u.delete_flag = :delete_flag", Long.class)
-				.setParameter("user_name", user_phone)
+				.setParameter("user_name", user_name)
 				.setParameter("user_phone", user_phone)
-				.setParameter("user_email", user_phone)
+				.setParameter("user_email", user_email)
 				.setParameter("delete_flag", "N")
 				.getSingleResult();
 	}
