@@ -95,7 +95,7 @@ public class UserRepository {
 	}
 	
 	public void initUserMbti(String user_name, String user_nickname) {
-		em.createQuery("UPDATE User u SET u.user_mbti = :user_mbti " + 
+		em.createQuery("UPDATE User u SET u.user_mbti.mbti_idx = :user_mbti " + 
 						"WHERE u.user_name = :user_name AND u.user_nickname = :user_nickname AND u.delete_flag = :delete_flag")
 				.setParameter("user_mbti", 17)
 				.setParameter("user_name", user_name)
