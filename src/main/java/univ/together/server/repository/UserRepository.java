@@ -94,6 +94,16 @@ public class UserRepository {
 		em.persist(user);
 	}
 	
+	public void initUserMbti(String user_name, String user_nickname) {
+		em.createQuery("UPDATE User u SET u.user_mbti = :user_mbti " + 
+						"WHERE u.user_name = :user_name AND u.user_nickname = :user_nickname AND u.delete_flag = :delete_flag")
+				.setParameter("user_mbti", 17)
+				.setParameter("user_name", user_name)
+				.setParameter("user_nickname", user_nickname)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
+	}
+	
 	public String checkEmail(String user_email) {
 		return em.createQuery("SELECT u.user_email FROM User u WHERE u.user_email = :user_email", String.class)
 				.setParameter("user_email", user_email)

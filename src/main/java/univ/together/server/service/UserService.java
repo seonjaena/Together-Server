@@ -82,15 +82,13 @@ public class UserService {
 		String raw_phone = joinUserDto.getUser_phone();
 		int pos1 = raw_phone.indexOf("-");
 		int pos2 = raw_phone.lastIndexOf("-");
-//		String phone = raw_phone.substring(0, pos1) + raw_phone.substring(pos1 + 1, pos2) + raw_phone.substring(pos2 + 1, raw_phone.length());
-//		
-//		joinUserDto.setUser_phone(phone);
 		joinUserDto.setUser_pw(passwordEncoder.encode(joinUserDto.getUser_pw()));
 		User user = User.createJoinUser(joinUserDto.getUser_email(), joinUserDto.getUser_pw(), 
 				joinUserDto.getUser_name(), joinUserDto.getUser_nickname(), 
 				joinUserDto.getUser_phone(), joinUserDto.getUser_birth());
 		user.setGetAge();
 		userRepository.joinUser(user);
+		userRepository.initUserMbti(joinUserDto.getUser_name(), joinUserDto.getUser_nickname());
 	}
 	
 	// 이메일 중복검사와 간단한 형식 검사
