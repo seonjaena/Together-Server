@@ -29,15 +29,17 @@ public class TeamMatchingRepository {
 	// 검색할 태그들이 tag_list에 있는지확인, 있으면 idx 가져옴/ 없으면 tag_seach에서 찾고 없으면 -> tag_search에
 	// 새로 대입 / 있으면 search_idx 값 가져옴
 	public Long getTagIdx(String tag_name, String tag_detail_name) {
+
 		return em
 				.createQuery(
-						"SELECT t.tag_idx FROM TagList t WHERE t.tag_name =:tag_name t.tag_detail_name =:detail_name",
+						"SELECT t.tag_idx FROM TagList t WHERE t.tag_name =: tag_name AND t.tag_detail_name =:detail_name",
 						Long.class)
 				.setParameter("detail_name", tag_detail_name).setParameter("tag_name", tag_name).getSingleResult();
 	}
 
 	public Long getTagSearchIdx(String tag_name, String tag_detail_name) {
-		em.createNativeQuery("INSERT INTO tag_search VALUES(:search_name, :search_detail_name)")
+
+		em.createNativeQuery("INSERT INTO tag_search(search_name, search_detail_name) VALUES(:search_name, :search_detail_name)")
 				.setParameter("search_name", tag_name).setParameter("search_detail_name", tag_detail_name)
 				.executeUpdate();
 

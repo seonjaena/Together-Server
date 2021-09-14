@@ -23,14 +23,16 @@ public class TeamMatchingService {
 	@Transactional
 	public List<String> teamMatching(TeamMatchingDto teammatchingdto) {
 		ArrayList<Pair> tag_idx = new ArrayList<Pair>();
-		for(int i=0; i< teammatchingdto.getTag_num(); i++)
+		for(int i=0; i< teammatchingdto.getTag_num(); i++) {
+
 			try {
 				tag_idx.add(new Pair(teammatchingRepository.getTagIdx(teammatchingdto.getTag()[i], teammatchingdto.getDetail()[i]), 0));
 			}catch(Exception e) {
 				tag_idx.add(new Pair(0, teammatchingRepository.getTagSearchIdx(teammatchingdto.getTag()[i], teammatchingdto.getDetail()[i])));
 			}
+		}
 		
-		
+		System.out.println("asd");
 		return teammatchingRepository.teamMatching(teammatchingdto, tag_idx);
 	}
 	

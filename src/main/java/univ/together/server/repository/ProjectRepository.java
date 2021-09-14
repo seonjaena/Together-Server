@@ -23,7 +23,7 @@ import univ.together.server.repository.TeamMatchingRepository;
 public class ProjectRepository {
 
 	private final EntityManager em;
-
+	private final TeamMatchingRepository tm;
 	public List<ProjectSchedule> getProjectScheduleList(Long project_idx) {
 		return em
 				.createQuery(
@@ -185,8 +185,6 @@ public class ProjectRepository {
 		return em.createQuery("SELECT t FROM TagList t ", TagList.class).getResultList();
 	}
 
-	public TeamMatchingRepository tm;
-
 	public void insertProjectTag(Long pid, String tag_name, String detail_name) {
 		Long tid;
 		try {
@@ -199,11 +197,11 @@ public class ProjectRepository {
 			
 			Long sid = tm.getTagSearchIdx(tag_name, detail_name);
 
-			em.createNativeQuery("INSERT INTO project_tag VALUES(:pid, :tag_idx, :tag_search_idx)")
+			em.createNativeQuery("INSERT INTO project_tag(project_idx, tag_idx, tag_search_idx) VALUES(:pid, :tag_idx, :tag_search_idx)")
 					.setParameter("pid", pid).setParameter("tag_idx", tid).setParameter("tag_search_idx", sid)
 					.executeUpdate();
 		} else {
-			em.createNativeQuery("INSERT INTO project_tag VALUES(:pid, :tag_idx)").setParameter("pid", pid)
+			em.createNativeQuery("INSERT INTO project_tag(project_idx, tag_idx) VALUES(:pid, :tag_idx)").setParameter("pid", pid)
 					.setParameter("tag_idx", tid).executeUpdate();
 		}
 		// tag_list에 존재할 시 tid = x , 존재하지 않을시 tid= 0 tag_search에 추가 tag_search에서 idx 찾음
