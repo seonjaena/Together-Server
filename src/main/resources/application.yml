@@ -40,13 +40,13 @@ spring:
   thymeleaf:
     cache: false
 
-server: 
-    servlet: 
-      charset: UTF-8
-      enabled: true
-      force: true
+#server: 
+#    servlet: 
+#      charset: UTF-8
+#      enabled: true
+#      force: true
 
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: trace
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.type: trace
