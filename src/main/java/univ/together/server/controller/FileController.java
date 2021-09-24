@@ -67,7 +67,7 @@ public class FileController {
 	public ResponseEntity<Resource> fileModifyAndDownload(@RequestParam("file_idx") Long file_idx, @RequestParam("user_idx") Long user_idx) throws IOException {// file_idx->1
 		FileDownloadDto filedownloaddto = fileService.fileModifyAndDownload(file_idx, user_idx);
 		
-		Path path = Paths.get(filedownloaddto.getFile_path()+ "\\" + filedownloaddto.getFile_hashed_name()+ "." + filedownloaddto.getFile_extension());
+		Path path = Paths.get(filedownloaddto.getFile_path()+ "/" + filedownloaddto.getFile_hashed_name()+ "." + filedownloaddto.getFile_extension());
 		Resource resource = new InputStreamResource(Files.newInputStream(path));
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
@@ -79,7 +79,7 @@ public class FileController {
 	@GetMapping(value ="/detail/download/read/{file_idx}")
 	public ResponseEntity<Resource> fileReadAndDownload(@PathVariable("file_idx") Long file_idx) throws IOException {// file_idx->1
 		FileDownloadDto filedownloaddto = fileService.fileReadAndDownload(file_idx); // 파일 읽기 다운로드 구현
-		Path path = Paths.get(filedownloaddto.getFile_path()+ "\\" + filedownloaddto.getFile_hashed_name()+ "." + filedownloaddto.getFile_extension());
+		Path path = Paths.get(filedownloaddto.getFile_path()+ "/" + filedownloaddto.getFile_hashed_name()+ "." + filedownloaddto.getFile_extension());
 		Resource resource = new InputStreamResource(Files.newInputStream(path));
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
@@ -92,7 +92,7 @@ public class FileController {
 	@GetMapping(value ="/detail/download/reserve/{file_idx}")
 	public ResponseEntity<Resource> fileDownload(@PathVariable("file_idx") Long file_idx) throws IOException {// file_idx->1
 		FileDownloadDto filedownloaddto = fileService.fileReadAndDownload(file_idx); // 파일 읽기 다운로드 구현
-		Path path = Paths.get(filedownloaddto.getFile_path()+ "\\" + filedownloaddto.getFile_hashed_name()+ "." + filedownloaddto.getFile_extension());
+		Path path = Paths.get(filedownloaddto.getFile_path()+ "/" + filedownloaddto.getFile_hashed_name()+ "." + filedownloaddto.getFile_extension());
 		Resource resource = new InputStreamResource(Files.newInputStream(path));
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
