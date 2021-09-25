@@ -167,12 +167,9 @@ public class FileService {
 	// 파일 예약
 	@Transactional
 	public String reserveFile(FileReserveDto filereservedto) {
-		try {
-			fileRepository.reserveFile(filereservedto);
-			return "success";
-		} catch (Exception e) {
-			return "failed";
-		}
+		
+			return fileRepository.reserveFile(filereservedto);
+		
 	}
 
 	// 파일 예약 메인

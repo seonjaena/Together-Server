@@ -21,7 +21,7 @@ import univ.together.server.model.FileVersion;
 public class FileRepository {
 
 	private final EntityManager em;
-
+	
 	public List<File> getFileList(Long project_idx) {
 		return em.createQuery(
 				"SELECT f FROM File f WHERE f.project_idx.project_idx = :project_idx AND f.com_delete_flag = :com_delete_flag",
@@ -124,35 +124,58 @@ public class FileRepository {
 	}
 
 	// 파일 예약
-	public void reserveFile(FileReserveDto filereservedto) {
+	public String reserveFile(FileReserveDto filereservedto) {
 		LocalDateTime dt = null;
+		
 		try {
-			dt = em.createQuery(
-					"SELECT r.reserve_start_datetime FROM FileReservation r WHERE r.file_idx.file_idx = :file_idx AND r.reserve_start_datetime"
-					+ "<= :end_datetime",
-					LocalDateTime.class).setParameter("file_idx", filereservedto.getFile_idx())
-					.setParameter("end_datetime", filereservedto.getEnd_datetime())
-					.getSingleResult();
-			
+		em.createQuery("SELECT r FROM FileReservation r WHERE r.file_idx.file_idx = :file_idx AND (r.reserve_start_datetime "
+				+ "< :start_datetime AND r.reserve_end_datetime >: start_datetime) OR (r.reserve_start_datetime <:end_datetime AND r.reserve_end_datetime >:end_datetime)"
+				+ "OR (r.reserve_start_datetime >:start_datetime AND r.reserve_end_datetime <:end_datetime)",FileReservation.class)
+		.setParameter("start_datetime", filereservedto.getStart_datetime())
+		.setParameter("end_datetime", filereservedto.getEnd_datetime());
+		
+		
+		return "err";
+		}catch(Exception e) {
 			em.createNativeQuery(
 					"INSERT INTO file_reservation(user_idx, reserve_start_datetime, reserve_end_datetime, file_idx)"
 							+ " VALUE(:user_idx, :reserve_start_datetime, :reserve_end_datetime, :file_idx)")
 					.setParameter("user_idx", filereservedto.getUser_idx())
 					.setParameter("reserve_start_datetime", filereservedto.getStart_datetime())
-					.setParameter("reserve_end_datetime", dt.minusMinutes(1))
+					.setParameter("reserve_end_datetime", filereservedto.getEnd_datetime())
 					.setParameter("file_idx", filereservedto.getFile_idx()).executeUpdate();
-
-			
-		} catch (Exception e) {
-			System.out.println(e);
-		em.createNativeQuery(
-				"INSERT INTO file_reservation(user_idx, reserve_start_datetime, reserve_end_datetime, file_idx)"
-						+ " VALUE(:user_idx, :reserve_start_datetime, :reserve_end_datetime, :file_idx)")
-				.setParameter("user_idx", filereservedto.getUser_idx())
-				.setParameter("reserve_start_datetime", filereservedto.getStart_datetime())
-				.setParameter("reserve_end_datetime", filereservedto.getEnd_datetime())
-				.setParameter("file_idx", filereservedto.getFile_idx()).executeUpdate();
 		}
+		
+		return "success";
+		
+		
+//		try {
+//			dt = em.createQuery(
+//					"SELECT r.reserve_start_datetime FROM FileReservation r WHERE r.file_idx.file_idx = :file_idx AND r.reserve_start_datetime"
+//					+ "<= :end_datetime",
+//					LocalDateTime.class).setParameter("file_idx", filereservedto.getFile_idx())
+//					.setParameter("end_datetime", filereservedto.getEnd_datetime())
+//					.getSingleResult();
+//			
+//			em.createNativeQuery(
+//					"INSERT INTO file_reservation(user_idx, reserve_start_datetime, reserve_end_datetime, file_idx)"
+//							+ " VALUE(:user_idx, :reserve_start_datetime, :reserve_end_datetime, :file_idx)")
+//					.setParameter("user_idx", filereservedto.getUser_idx())
+//					.setParameter("reserve_start_datetime", filereservedto.getStart_datetime())
+//					.setParameter("reserve_end_datetime", dt.minusMinutes(1))
+//					.setParameter("file_idx", filereservedto.getFile_idx()).executeUpdate();
+//
+//			
+//		} catch (Exception e) {
+//			System.out.println(e);
+//		em.createNativeQuery(
+//				"INSERT INTO file_reservation(user_idx, reserve_start_datetime, reserve_end_datetime, file_idx)"
+//						+ " VALUE(:user_idx, :reserve_start_datetime, :reserve_end_datetime, :file_idx)")
+//				.setParameter("user_idx", filereservedto.getUser_idx())
+//				.setParameter("reserve_start_datetime", filereservedto.getStart_datetime())
+//				.setParameter("reserve_end_datetime", filereservedto.getEnd_datetime())
+//				.setParameter("file_idx", filereservedto.getFile_idx()).executeUpdate();
+//		}
 	}
 
 	// 파일 예약 메인
