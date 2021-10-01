@@ -125,18 +125,15 @@ public class FileRepository {
 
 	// 파일 예약
 	public String reserveFile(FileReserveDto filereservedto) {
-		LocalDateTime dt = null;
-		
-		try {
-		em.createQuery("SELECT r FROM FileReservation r WHERE r.file_idx.file_idx = :file_idx AND (r.reserve_start_datetime "
-				+ "< :start_datetime AND r.reserve_end_datetime >: start_datetime) OR (r.reserve_start_datetime <:end_datetime AND r.reserve_end_datetime >:end_datetime)"
-				+ "OR (r.reserve_start_datetime >:start_datetime AND r.reserve_end_datetime <:end_datetime)",FileReservation.class)
-		.setParameter("start_datetime", filereservedto.getStart_datetime())
-		.setParameter("end_datetime", filereservedto.getEnd_datetime());
 		
 		
-		return "err";
-		}catch(Exception e) {
+		List num = em.createNativeQuery("SELECT COUNT(*) FROM file_reservation WHERE file_idx = :file_idx AND"
+				+ " reserve_start_datetime <= :end_datetime AND reserve_end_datetime>= :start_datetime")
+		.setParameter("file_idx", filereservedto.getFile_idx()).setParameter("start_datetime", filereservedto.getStart_datetime()).setParameter("end_datetime", filereservedto.getEnd_datetime())
+		.getResultList();
+		
+		System.out.println(num.get(0).toString());
+		if(num.get(0).toString()=="0") {
 			em.createNativeQuery(
 					"INSERT INTO file_reservation(user_idx, reserve_start_datetime, reserve_end_datetime, file_idx)"
 							+ " VALUE(:user_idx, :reserve_start_datetime, :reserve_end_datetime, :file_idx)")
@@ -144,9 +141,13 @@ public class FileRepository {
 					.setParameter("reserve_start_datetime", filereservedto.getStart_datetime())
 					.setParameter("reserve_end_datetime", filereservedto.getEnd_datetime())
 					.setParameter("file_idx", filereservedto.getFile_idx()).executeUpdate();
-		}
+			return "success";
 		
-		return "success";
+		}
+			return "err";
+			
+		
+		
 		
 		
 //		try {
@@ -182,7 +183,7 @@ public class FileRepository {
 	public List<FileReservation> reserveFileList(Long file_idx) {
 //		List l = new ArrayList<>();
 		
-		return em.createQuery("SELECT fr FROM FileReservation fr JOIN FETCH fr.user_idx WHERE fr.file_idx.file_idx = :file_idx", FileReservation.class)
+		return em.createQuery("SELECT fr FROM FileReservation fr JOIN FETCH fr.user_idx WHERE fr.file_idx.file_idx = :file_idx ORDER BY fr.reserve_start_datetime", FileReservation.class)
 				.setParameter("file_idx", file_idx)
 				.getResultList();
 		
@@ -300,11 +301,12 @@ public class FileRepository {
 	// 파일예약조기종료
 	public String earlyFinish(Long file_idx) {
 		Long file_reservation_idx = em.createQuery(
-				"SELECT r.file_reservation_idx FROM FileReservation r WHERE r.reserve_start_datetime <= :now_datetime1 AND"
-						+ " r.reserve_end_datetime >= : now_datetime2 AND r.file_idx.file_idx = :file_idx",Long.class)
-				.setParameter("now_datetime1", LocalDateTime.now()).setParameter("now_datetime2", LocalDateTime.now()).setParameter("file_idx", file_idx).getSingleResult();
-		em.createNativeQuery("DELETE FROM file_reservation r WHERE r.file_reservation_idx"
+				"SELECT r.file_reservation_idx FROM FileReservation r WHERE r.reserve_start_datetime <= :now_datetime AND"
+						+ " r.reserve_end_datetime >= : now_datetime AND r.file_idx.file_idx = :file_idx",Long.class)
+				.setParameter("now_datetime", LocalDateTime.now()).setParameter("file_idx", file_idx).getSingleResult();
+		em.createNativeQuery("UPDATE file_reservation SET reserve_end_datetime = :now WHERE file_reservation_idx"
 				+ "= :file_reservation_idx")
+		.setParameter("now", LocalDateTime.now().minusMinutes(1))
 		.setParameter("file_reservation_idx", file_reservation_idx)
 		.executeUpdate();
 		
