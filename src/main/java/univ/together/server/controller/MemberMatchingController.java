@@ -1,8 +1,9 @@
 package univ.together.server.controller;
 
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,12 +43,17 @@ public class MemberMatchingController {
 		memberMatchingService.registerUpdateProfileCard(userIdx, registerSearchMemberProfileCardDto);
 	}
 	
+	// 사용자 card list
+	@GetMapping(value = "/search/cards/{userIdx}")
+	public List<SearchMemberProfileCardDto> cardList(@PathVariable(name = "userIdx") Long userIdx) {
+		return memberMatchingService.getProfileCardList(userIdx);
+	}
 	
-	// 팀원 검색
-	@GetMapping(value = "/search/{projectIdx}")
-	public void memberSearching(@ModelAttribute MemberSearchingDto memberSearchingDto, 
-								@PathVariable(name = "projectIdx") Long projectIdx) {
-		memberMatchingService.getUserList(projectIdx);
+	// 팀원 검색 완료
+	@PostMapping(value = "/search/do/{userIdx}")
+	public List<SearchMemberProfileCardDto> memberSearch(@RequestBody MemberSearchingDto memberSearchingDto, 
+							 @PathVariable(name = "userIdx") Long userIdx) {
+		return memberMatchingService.getSearchResult(userIdx, memberSearchingDto);
 	}
 	
 }

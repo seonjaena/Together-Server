@@ -1,5 +1,8 @@
 package univ.together.server.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +14,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MemberSearchingDto {
 
-	private Integer age;
-	private String license1;
-	private String license2;
-	private String license3;
-	private Integer mbti;
+	private Integer min_age;
+	private Integer max_age;
+	private List<String> license = new ArrayList<String>();
+	private String main_addr;
+	private String reference_addr;
+	private String detail_addr;
+	private List<String> hobby_small_idx = new ArrayList<String>();
 	
 }

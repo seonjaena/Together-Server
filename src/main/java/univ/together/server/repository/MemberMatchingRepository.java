@@ -55,9 +55,26 @@ public class MemberMatchingRepository {
 				.executeUpdate();
 	}
 	
-	public List<User> getUserList() {
-		return em.createQuery("SELECT u FROM User u WHERE u.delete_flag = :delete_flag", User.class)
+	// user들의 프로필 카드 리스트(최근 등록자 top5)
+	public List<SearchMember> getProfileCardList(Long user_idx) {
+		return em.createQuery("SELECT sm FROM SearchMember sm " + 
+							  "WHERE sm.user_idx.delete_flag = :delete_flag AND " + 
+							  "sm.user_idx.user_idx != :user_idx " + 
+							  "ORDER BY sm.search_member_idx DESC", SearchMember.class)
 				.setParameter("delete_flag", "N")
+				.setParameter("user_idx", user_idx)
+				.setFirstResult(0)
+				.setMaxResults(5)
+				.getResultList();
+	}
+	
+	// user들의 프로필 카드 리스트(모든 등록자)
+	public List<SearchMember> getAllProfileCardList(Long user_idx) {
+		return em.createQuery("SELECT sm FROM SearchMember sm " + 
+							  "WHERE sm.user_idx.delete_flag = :delete_flag AND " + 
+							  "sm.user_idx.user_idx != :user_idx", SearchMember.class)
+				.setParameter("delete_flag", "N")
+				.setParameter("user_idx", user_idx)
 				.getResultList();
 	}
 	

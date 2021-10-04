@@ -28,6 +28,7 @@ public class SearchMemberProfileCardDto {
 	private String resume;
 	private String comment;
 	private String user_profile_photo;
+	private Integer num;
 	
 	public SearchMemberProfileCardDto(SearchMember sm) {
 		user_name = sm.getUser_idx().getUser_name();
@@ -59,6 +60,9 @@ public class SearchMemberProfileCardDto {
 				hobby_names.add(uhl.getHobby_search_idx().getUser_hobby_cat_small_name());
 			}
 		}
+		
+		resume = sm.getResume();
+		comment = sm.getComment();
 		
 		user_profile_photo = "http://101.101.216.93:8080/images/" + sm.getUser_idx().getUser_profile_photo();
 	}
