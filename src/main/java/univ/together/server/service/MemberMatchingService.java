@@ -125,8 +125,8 @@ public class MemberMatchingService {
 		
 		resultList = resultList.stream().sorted(Comparator.comparing(SearchMemberProfileCardDto::getNum).reversed()).collect(Collectors.toList());
 		
-		if(resultList.size() >= 5) {
-			for(int i = 0; i < 5; i++) list.add(resultList.get(i));
+		if(resultList.size() >= 3) {
+			for(int i = 0; i < 3; i++) list.add(resultList.get(i));
 		}else {
 			for(int i = 0; i < resultList.size(); i++) list.add(resultList.get(i));
 		}

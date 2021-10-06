@@ -16,6 +16,7 @@ import univ.together.server.model.UserHobbyList;
 @NoArgsConstructor
 public class SearchMemberProfileCardDto {
 
+	private Long user_idx;
 	private String user_name;
 	private String user_nickname;
 	private int age;
@@ -31,6 +32,7 @@ public class SearchMemberProfileCardDto {
 	private Integer num;
 	
 	public SearchMemberProfileCardDto(SearchMember sm) {
+		user_idx = sm.getUser_idx().getUser_idx();
 		user_name = sm.getUser_idx().getUser_name();
 		user_nickname = sm.getUser_idx().getUser_nickname();
 		age = sm.getUser_idx().getUser_age();

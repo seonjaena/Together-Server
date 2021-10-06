@@ -21,6 +21,7 @@ public class ProjectScheduleDto {
 	private LocalDateTime schedule_start_datetime;
 	private LocalDateTime schedule_end_datetime;
 	private Long writer_idx;
+	private String writer_profile_photo;
 	
 	public ProjectScheduleDto(ProjectSchedule projectSchedule) {
 		this.schedule_idx = projectSchedule.getSchedule_idx();
@@ -30,6 +31,7 @@ public class ProjectScheduleDto {
 		this.schedule_start_datetime = projectSchedule.getSchedule_start_datetime();
 		this.schedule_end_datetime = projectSchedule.getSchedule_end_datetime();
 		this.writer_idx = projectSchedule.getWriter_idx().getUser_idx();
+		this.writer_profile_photo = projectSchedule.getWriter_idx().getUser_profile_photo();
 	}
 	
 }
