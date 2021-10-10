@@ -1,10 +1,13 @@
 package univ.together.server.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Repository;
+
+import com.thoughtworks.qdox.model.Member;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.model.RegisterSearchMemberProfileCardDto;
@@ -76,6 +79,54 @@ public class MemberMatchingRepository {
 				.setParameter("delete_flag", "N")
 				.setParameter("user_idx", user_idx)
 				.getResultList();
+	}
+	
+	// 초대를 하는 유저가 리더인지 확인
+	public Long checkUserLeader(Long user_idx, Long project_idx) {
+		return em.createQuery("SELECT COUNT(m) FROM Member m WHERE " + 
+							  "m.user_idx.user_idx = :user_idx AND " + 
+							  "m.project_idx.project_idx = :project_idx AND " + 
+							  "m.member_right = :member_right AND " + 
+							  "m.user_idx.delete_flag = :delete_flag", Long.class)
+				.setParameter("user_idx", user_idx)
+				.setParameter("project_idx", project_idx)
+				.setParameter("member_right", "Leader")
+				.setParameter("delete_flag", "N")
+				.getSingleResult();
+	}
+	
+	// 이미 팀원인지 확인
+	public Long checkUserMember(Long member_idx, Long project_idx) {
+		return em.createQuery("SELECT COUNT(m) FROM Member m WHERE " + 
+							  "m.user_idx.user_idx = :user_idx AND " + 
+							  "m.project_idx.project_idx = :project_idx AND " + 
+							  "m.user_idx.delete_flag = :delete_flag", Long.class)
+				.setParameter("user_idx", member_idx)
+				.setParameter("project_idx", project_idx)
+				.setParameter("delete_flag", "N")
+				.getSingleResult();
+	}
+	
+	// 이미 초대 메시지를 보냈는지 확인
+	public Long checkSentUser(Long member_idx, Long project_idx) {
+		return em.createQuery("SELECT COUNT(pi) FROM ProjectInvitation pi WHERE " + 
+							  "pi.project_idx.project_idx = :project_idx AND " + 
+							  "pi.user_idx.user_idx = :user_idx AND " + 
+							  "pi.user_idx.delete_flag = :delete_flag", Long.class)
+				.setParameter("project_idx", project_idx)
+				.setParameter("user_idx", member_idx)
+				.setParameter("delete_flag", "N")
+				.getSingleResult();
+	}
+	
+	// 팀원 초대
+	public int inviteMember(Long project_idx, Long member_idx) {
+		return em.createNativeQuery("INSERT INTO project_invitation (project_idx, user_idx, invite_datetime) " + 
+									"VALUES (:project_idx, :user_idx, :invite_datetime)")
+				.setParameter("project_idx", project_idx)
+				.setParameter("user_idx", member_idx)
+				.setParameter("invite_datetime", LocalDateTime.now())
+				.executeUpdate();
 	}
 	
 }

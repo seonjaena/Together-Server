@@ -74,6 +74,7 @@ public class UserService {
 		}
 		loginUserDto.setUser_email("");
 		loginUserDto.setUser_pw("");
+		loginUserDto.setUser_profile_photo("http://101.101.216.93:8080/images/" + loginUserDto.getUser_profile_photo());
 	}
 	
 	@Transactional

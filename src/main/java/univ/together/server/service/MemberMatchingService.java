@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.MemberProfileInfoDto;
 import univ.together.server.dto.MemberSearchingDto;
+import univ.together.server.dto.SearchInviteMemberDto;
 import univ.together.server.dto.SearchMemberProfileCardDto;
 import univ.together.server.model.RegisterSearchMemberProfileCardDto;
 import univ.together.server.model.SearchMember;
@@ -132,6 +133,46 @@ public class MemberMatchingService {
 		}
 		
 		return list;
+	}
+	
+	// 팀원 초대
+	@Transactional
+	public String invitation(SearchInviteMemberDto searchInviteMemberDto) {
+		try {
+			if(searchInviteMemberDto.getMember_idx() == searchInviteMemberDto.getUser_idx()) return "self_invite";
+			boolean isLeader = checkUserLeader(searchInviteMemberDto.getUser_idx(), searchInviteMemberDto.getProject_idx());
+			if(!isLeader) return "not_leader";
+			boolean isMember = checkUserMember(searchInviteMemberDto.getMember_idx(), searchInviteMemberDto.getProject_idx());
+			if(!isMember) return "already_in";
+			boolean isSent = checkSentUser(searchInviteMemberDto.getMember_idx(), searchInviteMemberDto.getProject_idx());
+			if(!isSent) return "already_sent";
+			boolean isSuccess = inviteMember(searchInviteMemberDto.getMember_idx(), searchInviteMemberDto.getProject_idx());
+			if(!isSuccess) throw new Exception();
+			return "success";
+		}catch(Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
+	
+	// 초대를 하는 유저가 리더인지 확인
+	public boolean checkUserLeader(Long user_idx, Long project_idx) {
+		return memberMatchingRepository.checkUserLeader(user_idx, project_idx) == 1? true : false;
+	}
+	
+	// 이미 팀원인지 확인
+	public boolean checkUserMember(Long member_idx, Long project_idx) {
+		return memberMatchingRepository.checkUserMember(member_idx, project_idx) == 0? true : false;
+	}
+	
+	// 이미 초대 메시지를 보냈는지 확인
+	public boolean checkSentUser(Long member_idx, Long project_idx) {
+		return memberMatchingRepository.checkSentUser(member_idx, project_idx) == 0? true : false;
+	}
+	
+	// 팀원 초대
+	public boolean inviteMember(Long member_idx, Long project_idx) {
+		return memberMatchingRepository.inviteMember(project_idx, member_idx) == 1? true : false;
 	}
 	
 }

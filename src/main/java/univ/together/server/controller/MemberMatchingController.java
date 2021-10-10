@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.MemberProfileInfoDto;
 import univ.together.server.dto.MemberSearchingDto;
+import univ.together.server.dto.SearchInviteMemberDto;
 import univ.together.server.dto.SearchMemberProfileCardDto;
 import univ.together.server.model.RegisterSearchMemberProfileCardDto;
 import univ.together.server.service.MemberMatchingService;
@@ -54,6 +55,12 @@ public class MemberMatchingController {
 	public List<SearchMemberProfileCardDto> memberSearch(@RequestBody MemberSearchingDto memberSearchingDto, 
 							 @PathVariable(name = "userIdx") Long userIdx) {
 		return memberMatchingService.getSearchResult(userIdx, memberSearchingDto);
+	}
+	
+	// 팀원 초대
+	@PostMapping(value = "/search/invite")
+	public String invitation(@RequestBody SearchInviteMemberDto searchInviteMemberDto) {
+		return memberMatchingService.invitation(searchInviteMemberDto);
 	}
 	
 }
