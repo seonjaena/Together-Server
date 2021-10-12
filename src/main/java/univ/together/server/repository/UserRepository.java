@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddPrivateScheduleDto;
+import univ.together.server.dto.EditUserAddressDto;
 import univ.together.server.model.PrivateSchedule;
 import univ.together.server.model.ProjectInvitation;
 import univ.together.server.model.User;
@@ -247,6 +248,23 @@ public class UserRepository {
 	}
 	
 	// ===========================================================
+	
+	// ======================== 주소 수정 =========================
+	public Integer editAddress(EditUserAddressDto editUserAddressDto, Long userIdx) {
+		return em.createQuery("UPDATE User u SET u.address.main_addr = :main_addr, " + 
+							  "u.address.reference_addr = :reference_addr, " + 
+							  "u.address.detail_addr = :detail_addr, " + 
+							  "u.address.post_num = :post_num WHERE " + 
+							  "u.user_idx = :user_idx AND " + 
+							  "u.delete_flag = :delete_flag")
+				.setParameter("main_addr", editUserAddressDto.getMain_addr())
+				.setParameter("reference_addr", editUserAddressDto.getReference_addr())
+				.setParameter("detail_addr", editUserAddressDto.getDetail_addr())
+				.setParameter("post_num", editUserAddressDto.getPost_num())
+				.setParameter("user_idx", userIdx)
+				.setParameter("delete_flag", "N")
+				.executeUpdate();
+	}
 	
 	// ======================== 프로필 수정 =========================
 	

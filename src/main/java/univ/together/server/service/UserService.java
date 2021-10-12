@@ -32,6 +32,7 @@ import univ.together.server.dto.CheckUserInfoForFindIdDto;
 import univ.together.server.dto.DecideJoinProjectDto;
 import univ.together.server.dto.EditDetailProfile;
 import univ.together.server.dto.EditHobbyDto;
+import univ.together.server.dto.EditUserAddressDto;
 import univ.together.server.dto.FindIdDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
@@ -607,6 +608,17 @@ public class UserService {
 			userRepository.addHobbyIl(addHobbyDto.getUser_idx(), search_idx);
 		}
 		return new AddHobbyReturnDto(userRepository.getAddHobbyReturnValue(addHobbyDto.getUser_idx()).get(0));
+	}
+	
+	// 주소를 수정
+	@Transactional
+	public String editAddress(EditUserAddressDto editUserAddressDto, Long userIdx) {
+		if(editUserAddressDto.getMain_addr().trim().equals("")) editUserAddressDto.setMain_addr(null);
+		if(editUserAddressDto.getReference_addr().trim().equals("")) editUserAddressDto.setReference_addr(null);
+		if(editUserAddressDto.getDetail_addr().trim().equals("")) editUserAddressDto.setDetail_addr(null);
+		if(editUserAddressDto.getPost_num().trim().equals("")) editUserAddressDto.setPost_num(null);
+		int num = userRepository.editAddress(editUserAddressDto, userIdx);
+		return num == 1? "success" : "fail";
 	}
 	
 	// 생년월일, 자격증, MBTI 수정

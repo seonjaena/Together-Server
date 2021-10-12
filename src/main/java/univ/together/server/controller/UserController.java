@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ import univ.together.server.dto.EditDetailProfile;
 import univ.together.server.dto.EditEmailPhoneDto;
 import univ.together.server.dto.EditHobbyDto;
 import univ.together.server.dto.EditNicknameDto;
+import univ.together.server.dto.EditUserAddressDto;
 import univ.together.server.dto.FindIdDto;
 import univ.together.server.dto.JoinUserDto;
 import univ.together.server.dto.LoginUserDto;
@@ -125,6 +127,12 @@ public class UserController {
 	@PostMapping(value = "/edit_detail_profile")
 	public void editDetailProfile(@RequestBody EditDetailProfile editDetailProfile) {
 		userService.editDetailProfile(editDetailProfile);
+	}
+	
+	// ================ 주소 수정 ================
+	@PostMapping(value = "/edit_address/{userIdx}")
+	public String editAddress(@PathVariable(name = "userIdx") Long userIdx, @RequestBody EditUserAddressDto editUserAddressDto) {
+		return userService.editAddress(editUserAddressDto, userIdx);
 	}
 	
 	// ================ 이메일 + 전화번호 수정 ================
