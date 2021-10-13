@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
+import univ.together.server.configuration.EnvironmentVariableConfig;
 import univ.together.server.dto.AddHobbyDto;
 import univ.together.server.dto.AddHobbyReturnDto;
 import univ.together.server.dto.AddPrivateScheduleDto;
@@ -75,7 +76,7 @@ public class UserService {
 		}
 		loginUserDto.setUser_email("");
 		loginUserDto.setUser_pw("");
-		loginUserDto.setUser_profile_photo("http://101.101.216.93:8080/images/" + loginUserDto.getUser_profile_photo());
+		loginUserDto.setUser_profile_photo(EnvironmentVariableConfig.getPhotoUrl() + loginUserDto.getUser_profile_photo());
 	}
 	
 	@Transactional
@@ -492,7 +493,7 @@ public class UserService {
 	
 		if(code.equals("success")) {
 			changeProfilePhotoDto.setCode(code);
-			changeProfilePhotoDto.setUser_profile_photo("http://101.101.216.93:8080/images/" + file_name);
+			changeProfilePhotoDto.setUser_profile_photo(EnvironmentVariableConfig.getPhotoUrl() + file_name);
 		}else {
 			changeProfilePhotoDto.setCode(code);
 			changeProfilePhotoDto.setUser_profile_photo(null);

@@ -1,4 +1,4 @@
-package univ.together.server.model;
+package univ.together.server.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

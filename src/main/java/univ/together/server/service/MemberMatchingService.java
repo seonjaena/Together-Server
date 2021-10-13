@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.MemberProfileInfoDto;
 import univ.together.server.dto.MemberSearchingDto;
+import univ.together.server.dto.RegisterSearchMemberProfileCardDto;
 import univ.together.server.dto.SearchInviteMemberDto;
 import univ.together.server.dto.SearchMemberProfileCardDto;
-import univ.together.server.model.RegisterSearchMemberProfileCardDto;
 import univ.together.server.model.SearchMember;
 import univ.together.server.repository.MemberMatchingRepository;
 

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import univ.together.server.configuration.EnvironmentVariableConfig;
 import univ.together.server.model.User;
 import univ.together.server.model.UserHobbyList;
 
@@ -56,7 +57,7 @@ public class MemberProfileInfoDto {
 				hobby_names.add(uhl.getHobby_search_idx().getUser_hobby_cat_small_name());
 			}
 		}
-		user_profile_photo = "http://101.101.216.93:8080/images/" + user.getUser_profile_photo();
+		user_profile_photo = EnvironmentVariableConfig.getPhotoUrl() + user.getUser_profile_photo();
 	}
 
 }

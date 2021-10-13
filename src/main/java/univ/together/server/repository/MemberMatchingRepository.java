@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.thoughtworks.qdox.model.Member;
 
 import lombok.RequiredArgsConstructor;
-import univ.together.server.model.RegisterSearchMemberProfileCardDto;
+import univ.together.server.dto.RegisterSearchMemberProfileCardDto;
 import univ.together.server.model.SearchMember;
 import univ.together.server.model.User;
 

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import univ.together.server.configuration.EnvironmentVariableConfig;
 import univ.together.server.model.SearchMember;
 import univ.together.server.model.UserHobbyList;
 
@@ -66,7 +67,7 @@ public class SearchMemberProfileCardDto {
 		resume = sm.getResume();
 		comment = sm.getComment();
 		
-		user_profile_photo = "http://101.101.216.93:8080/images/" + sm.getUser_idx().getUser_profile_photo();
+		user_profile_photo = EnvironmentVariableConfig.getPhotoUrl() + sm.getUser_idx().getUser_profile_photo();
 	}
 	
 }

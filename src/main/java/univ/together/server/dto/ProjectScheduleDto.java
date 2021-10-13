@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import univ.together.server.configuration.EnvironmentVariableConfig;
 import univ.together.server.model.ProjectSchedule;
 
 @Getter
@@ -31,7 +32,7 @@ public class ProjectScheduleDto {
 		this.schedule_start_datetime = projectSchedule.getSchedule_start_datetime();
 		this.schedule_end_datetime = projectSchedule.getSchedule_end_datetime();
 		this.writer_idx = projectSchedule.getWriter_idx().getUser_idx();
-		this.writer_profile_photo = "http://101.101.216.93:8080/images/" + projectSchedule.getWriter_idx().getUser_profile_photo();
+		this.writer_profile_photo = EnvironmentVariableConfig.getPhotoUrl() + projectSchedule.getWriter_idx().getUser_profile_photo();
 	}
 	
 }

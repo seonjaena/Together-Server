@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import univ.together.server.configuration.EnvironmentVariableConfig;
 import univ.together.server.model.User;
 
 @Getter
@@ -43,7 +44,7 @@ public class UserProfileDto {
 		this.user_nickname = user.getUser_nickname();
 		
 		if(user.getUser_profile_photo() != null) {
-			this.user_profile_photo = "http://101.101.216.93:8080/images/" + user.getUser_profile_photo();
+			this.user_profile_photo = EnvironmentVariableConfig.getPhotoUrl() + user.getUser_profile_photo();
 		}
 		
 		if(user.getAddress() != null) {
