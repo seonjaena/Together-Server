@@ -1,16 +1,20 @@
 package univ.together.server.repository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
-import univ.together.server.dto.TeamSearchingDto;
+import univ.together.server.dto.CreateCardDto;
 import univ.together.server.dto.Pair;
+import univ.together.server.dto.ProjectCardDto;
+import univ.together.server.dto.TeamSearchingDto;
+import univ.together.server.model.Project;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,6 +29,49 @@ public class TeamMatchingRepository {
 //				.getSingleResult();
 //	}
 //	
+	
+	//Card가지고있는팀
+	public List<Long> findSearchAvailableProject(Long user_idx) {
+		return em.createQuery("SELECT p.project_idx FROM Project p JOIN Member m ON m.project_idx = p.project_idx WHERE p.open_flag = 'Y' AND m.user_idx.user_idx = :user_idx AND p.project_status='A'",Long.class)
+				.setParameter("user_idx", user_idx).getResultList();
+	}
+	
+	//projectInfo
+	public Project getProjectInfo(String project_name) {
+		System.out.println(project_name);
+		return em.createQuery("SELECT p FROM Project p WHERE p.project_name = :project_name AND p.project_status='A' ",Project.class).setParameter("project_name", project_name).getSingleResult();
+	}
+	
+	public void completeCreateCard(CreateCardDto ccd) {
+		em.createQuery("UPDATE Project p SET p.open_flag='Y' WHERE p.project_idx = :project_idx").setParameter("project_idx", ccd.getProject_idx()).executeUpdate();
+		
+		em.createNativeQuery("INSERT INTO project_card(project_idx, comment) VALUES(:project_idx, :comment)").
+		setParameter("project_idx", ccd.getProject_idx()).setParameter("project_idx", ccd.getComment()).executeUpdate();
+	}
+	
+	//projectCardList
+	public ProjectCardDto getTeamMatchingInfo(Long project_idx) {
+		
+		System.out.println("repo");
+		Project p = em.createQuery("SELECT p FROM Project p WHERE p.project_idx = :project_idx AND project_status='A' ",Project.class).setParameter("project_idx", project_idx).getSingleResult();
+		System.out.println("p err");
+		String comment = em.createQuery("SELECT pc.comment FROM ProjectCard pc WHERE pc.project_idx.project_idx = :project_idx AND pc.project_idx.project_status='A' ",String.class).setParameter("project_idx", project_idx).getSingleResult();
+		System.out.println("c err");
+		ProjectCardDto pc = new ProjectCardDto(p,comment);
+		System.out.println("dto err");
+		return pc;
+	}
+	
+	//card없는팀
+	public List<String> findSearchNotAvailableProject(Long user_idx){
+		return em.createQuery("SELECT p.project_name FROM Project p JOIN Member m ON m.project_idx = p.project_idx WHERE p.open_flag='N' AND m.user_idx.user_idx = :user_idx AND project_status='A' ",String.class)
+				.setParameter("user_idx", user_idx).getResultList();
+	}
+	
+	//Create projectCard
+
+	
+	
 
 	// 팀 매칭
 	// 검색할 태그들이 tag_list에 있는지확인, 있으면 idx 가져옴/ 없으면 tag_seach에서 찾고 없으면 -> tag_search에
@@ -65,7 +112,7 @@ public class TeamMatchingRepository {
 //		private String mbti;
 		
 		
-		String str = "SELECT p.project_name FROM Project p JOIN FETCH ProjectTag t WHERE p.professionality Like :professionality AND "
+		String str = "SELECT p.project_name FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality Like :professionality AND "
 				+ "p.project_type Like: project_type AND p.project_start_date >= :project_start_date AND p.project_end_date"
 				+ "<= :project_end_date";
 
@@ -87,8 +134,7 @@ public class TeamMatchingRepository {
 		// 값이 없으면 다른값으로 추가
 	}
 	
-	public void teamMatching(String big, String small){
-		
-		
-	}
+	
+	
+	
 }

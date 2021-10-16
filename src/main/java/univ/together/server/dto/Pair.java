@@ -10,6 +10,8 @@ import lombok.Setter;
 public class Pair{
 	private Long x;
 	private Long y;
+	private String s1;
+	private String s2;
 	
 	public Pair(Long x, int y){
 		this.x= x;
@@ -18,5 +20,10 @@ public class Pair{
 	public Pair(int x, Long y){
 		this.x=(long)x;
 		this.y=y;
+	}
+	
+	public Pair(String s1, String s2) {
+		this.s1=s1;
+		this.s2=s2;
 	}
 }

@@ -2,15 +2,22 @@ package univ.together.server.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import univ.together.server.dto.CreateCardDto;
 import univ.together.server.dto.Pair;
+import univ.together.server.dto.ProjectCardDto;
 import univ.together.server.dto.TeamMatchingDto;
 import univ.together.server.dto.TeamSearchingDto;
+import univ.together.server.model.Project;
 import univ.together.server.model.UserHobbyList;
+import univ.together.server.repository.MainRepository;
+import univ.together.server.repository.ProjectRepository;
 import univ.together.server.repository.TeamMatchingRepository;
 import univ.together.server.repository.UserRepository;
 @Service
@@ -20,6 +27,7 @@ public class TeamMatchingService {
 	
 	private final TeamMatchingRepository teammatchingRepository;
 	private final UserRepository userRepository;
+
 	
 	@Transactional
 	public List<String> teamSearching(TeamSearchingDto teamSearchingdto) {
@@ -37,12 +45,30 @@ public class TeamMatchingService {
 		return teammatchingRepository.teamSearching(teamSearchingdto, tag_idx);
 	}
 	
+	public List<String> CreateProjectCardMain(Long user_idx){
+		return teammatchingRepository.findSearchNotAvailableProject(user_idx);
+	}
 	
-	@Transactional
-	public void teamMatching(TeamMatchingDto teamMatchingDto) {
-		List<UserHobbyList> hobby_list=userRepository.getAddHobbyReturnValue(teamMatchingDto.getUser_idx());
-		String big="", small="";
-		teammatchingRepository.teamMatching(big, small);
+	public Project getProjectInfo(String project_name) {
+		return teammatchingRepository.getProjectInfo(project_name);
+	};
+	
+	public void completeCreateCard(CreateCardDto ccd) {
+		teammatchingRepository.completeCreateCard(ccd);
+	}
+	
+	
+	public List<ProjectCardDto> teamMatchingMain(Long user_idx) {
+		List<Long>project_idx_list = new ArrayList<>();
+		List<ProjectCardDto> card_list = new ArrayList<>();
+		project_idx_list.addAll(teammatchingRepository.findSearchAvailableProject(user_idx));
+		System.out.println(project_idx_list);
+		for (Long idx : project_idx_list) {
+			
+			card_list.add(teammatchingRepository.getTeamMatchingInfo(idx));
+		}
+		
+		return card_list;
 	}
 }
 

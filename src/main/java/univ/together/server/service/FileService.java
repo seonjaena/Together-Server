@@ -58,6 +58,7 @@ public class FileService {
 
 		} catch (Exception e) {
 			System.out.println("폴더 생성 X");
+			return "folderError";
 		}
 //		java.io.File newFile = new java.io.File(file_path, file_hashed_name +"v1"+ "." + uploadfiledto.getFile_extension());
 		try {
