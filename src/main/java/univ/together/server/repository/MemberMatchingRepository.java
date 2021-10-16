@@ -7,10 +7,11 @@ import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Repository;
 
-import com.thoughtworks.qdox.model.Member;
 
 import lombok.RequiredArgsConstructor;
+import univ.together.server.dto.MemberSearchingDto;
 import univ.together.server.dto.RegisterSearchMemberProfileCardDto;
+import univ.together.server.model.SearchCondition;
 import univ.together.server.model.SearchMember;
 import univ.together.server.model.User;
 
@@ -26,6 +27,13 @@ public class MemberMatchingRepository {
 							  "WHERE sm.user_idx.user_idx = :user_idx AND sm.user_idx.delete_flag = :delete_flag", SearchMember.class)
 				.setParameter("user_idx", user_idx)
 				.setParameter("delete_flag", "N")
+				.getSingleResult();
+	}
+	
+	// user의 저장된 검색 조건을 가져옴
+	public SearchCondition getUserSearchCondition(Long user_idx) {
+		return em.createQuery("SELECT sc FROM SearchCondition sc WHERE sc.user_idx.user_idx = :user_idx", SearchCondition.class)
+				.setParameter("user_idx", user_idx)
 				.getSingleResult();
 	}
 	
@@ -79,6 +87,32 @@ public class MemberMatchingRepository {
 				.setParameter("delete_flag", "N")
 				.setParameter("user_idx", user_idx)
 				.getResultList();
+	}
+	
+	// user의 기존 검색조건 존재 여부 확인
+	public void deleteSearchCondition(Long user_idx) {
+		em.createQuery("DELETE FROM SearchCondition WHERE user_idx.user_idx = :user_idx")
+				.setParameter("user_idx", user_idx)
+				.executeUpdate();
+	}
+	
+	// user의 검색조건 저장
+	public int saveSearchCondition(Long user_idx, MemberSearchingDto memberSearchingDto) {
+		return em.createNativeQuery("INSERT INTO search_condition " + 
+									"(min_age, max_age, license1, license2, license3, main_addr, reference_addr, user_idx, hobby_small_idx1, hobby_small_idx2, hobby_small_idx3) VALUES " + 
+									"(:min_age, :max_age, :license1, :license2, :license3, :main_addr, :reference_addr, :user_idx, :hobby_small_idx1, :hobby_small_idx2, :hobby_small_idx3)")
+				.setParameter("min_age", memberSearchingDto.getMin_age())
+				.setParameter("max_age", memberSearchingDto.getMax_age())
+				.setParameter("license1", memberSearchingDto.getLicense().get(0))
+				.setParameter("license2", memberSearchingDto.getLicense().get(1))
+				.setParameter("license3", memberSearchingDto.getLicense().get(2))
+				.setParameter("main_addr", memberSearchingDto.getMain_addr())
+				.setParameter("reference_addr", memberSearchingDto.getReference_addr())
+				.setParameter("user_idx", user_idx)
+				.setParameter("hobby_small_idx1", memberSearchingDto.getLicense().get(0))
+				.setParameter("hobby_small_idx2", memberSearchingDto.getLicense().get(1))
+				.setParameter("hobby_small_idx3", memberSearchingDto.getLicense().get(2))
+				.executeUpdate();
 	}
 	
 	// 초대를 하는 유저가 리더인지 확인

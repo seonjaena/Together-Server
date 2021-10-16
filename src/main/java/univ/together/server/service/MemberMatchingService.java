@@ -1,8 +1,11 @@
 package univ.together.server.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -25,13 +28,30 @@ public class MemberMatchingService {
 	private final MemberMatchingRepository memberMatchingRepository;
 	
 	// user의 프로필 카드를 가져옴
-	public SearchMemberProfileCardDto getUserProfileCard(Long userIdx) {
+	public List<SearchMemberProfileCardDto> getUserProfileCard(Long userIdx) {
+		SearchMemberProfileCardDto searchMemberProfileCardDtoreturn;
+		List<SearchMemberProfileCardDto> savedList;
+		List<SearchMemberProfileCardDto> returnList = new ArrayList<SearchMemberProfileCardDto>();
 		try {
-			return new SearchMemberProfileCardDto(memberMatchingRepository.getUserProfileCard(userIdx));
+			searchMemberProfileCardDtoreturn = new SearchMemberProfileCardDto(memberMatchingRepository.getUserProfileCard(userIdx));
+			returnList.add(searchMemberProfileCardDtoreturn);
 		}catch(Exception e) {
 			return null;
 		}
+		
+		try {
+			savedList = calResult(memberMatchingRepository.getAllProfileCardList(userIdx), new MemberSearchingDto(memberMatchingRepository.getUserSearchCondition(userIdx)));
+			for(SearchMemberProfileCardDto searchMemberProfileCardDto : savedList) {
+				returnList.add(searchMemberProfileCardDto);
+			}
+			return returnList;
+		}catch(Exception e) {
+			return returnList;
+		}
 	}
+	
+	// null --> 내 프로필 X, 추천 X
+	// [a, b] --> 내 user_idx랑 같은 것은 내 profile_card, 다른건 추천 list profile_card
 	
 	// user의 프로필 카드가 없는 경우, user의 정보를 가져온다.
 	public MemberProfileInfoDto getUserProfileInfo(Long userIdx) {
@@ -54,8 +74,19 @@ public class MemberMatchingService {
 		return memberMatchingRepository.getProfileCardList(userIdx).stream().map(sm -> new SearchMemberProfileCardDto(sm)).collect(Collectors.toList());
 	}
 	
-	// 검색 결과(가장 맞는 user top5)
+	// 검색 결과(가장 맞는 user top3)
+	@Transactional
 	public List<SearchMemberProfileCardDto> getSearchResult(Long userIdx, MemberSearchingDto memberSearchingDto) {
+		if(memberSearchingDto.getSave() == true) {
+			memberMatchingRepository.deleteSearchCondition(userIdx);
+			for(int i = memberSearchingDto.getLicense().size(); i < 3; i++) memberSearchingDto.getLicense().add(null);
+			for(int i = memberSearchingDto.getHobby_small_idx().size(); i < 3; i++) memberSearchingDto.getHobby_small_idx().add(null);
+			memberMatchingRepository.saveSearchCondition(userIdx, memberSearchingDto);
+		}
+		memberSearchingDto.getLicense().removeAll(Collections.singletonList(null));
+		memberSearchingDto.getHobby_small_idx().removeAll(Collections.singletonList(null));
+		memberSearchingDto.getLicense().removeAll(Collections.singletonList(""));
+		memberSearchingDto.getHobby_small_idx().removeAll(Collections.singletonList(""));
 		return calResult(memberMatchingRepository.getAllProfileCardList(userIdx), memberSearchingDto);
 	}
 	
@@ -79,25 +110,26 @@ public class MemberMatchingService {
 						num += 1;
 					}
 				}
-			}else {
-				num += 1;
 			}
 			
-			if(searchMember.getUser_idx().getAddress() != null && !memberSearchingDto.getMain_addr().equals("") && 
-					!memberSearchingDto.getReference_addr().equals("") && !memberSearchingDto.getDetail_addr().equals("")) {
+			/*
+			 searchMember.getUser_idx().getAddress() != null && !memberSearchingDto.getMain_addr().equals("") && 
+					!memberSearchingDto.getReference_addr().equals("") && memberSearchingDto.getReference_addr() != null 
+			 */
+			
+			if(searchMember.getUser_idx().getAddress() != null && 
+					!searchMember.getUser_idx().getAddress().getMain_addr().equals("") && 
+					!searchMember.getUser_idx().getAddress().getReference_addr().equals("") && 
+					searchMember.getUser_idx().getAddress().getMain_addr() != null && 
+					searchMember.getUser_idx().getAddress().getReference_addr() != null && 
+					!memberSearchingDto.getMain_addr().equals("") && !memberSearchingDto.getReference_addr().equals("") && 
+					memberSearchingDto.getMain_addr() != null && memberSearchingDto.getReference_addr() != null) {
 				if(searchMember.getUser_idx().getAddress().getMain_addr().equals(memberSearchingDto.getMain_addr())) {
 					num += 1;
 					if(searchMember.getUser_idx().getAddress().getReference_addr().equals(memberSearchingDto.getReference_addr())) {
 						num += 1;
-						if(searchMember.getUser_idx().getAddress().getDetail_addr().equals(memberSearchingDto.getDetail_addr())) {
-							num += 1;
-						}
 					}
 				}
-			}else if(memberSearchingDto.getMain_addr().equals("") && 
-					memberSearchingDto.getReference_addr().equals("") && 
-					memberSearchingDto.getDetail_addr().equals("")) {
-				num += 1;
 			}
 			
 			if(memberSearchingDto.getHobby_small_idx().size() >= 1) {
@@ -113,8 +145,6 @@ public class MemberMatchingService {
 						}
 					}
 				}
-			}else {
-				num += 1;
 			}
 			
 			SearchMemberProfileCardDto smpcd = new SearchMemberProfileCardDto(searchMember);

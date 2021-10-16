@@ -26,8 +26,10 @@ public class MemberMatchingController {
 	private final MemberMatchingService memberMatchingService;
 	
 	// 팀원 검색 main page
+	// 검색조건이 저장되었다면, 추천 리스트를 return
+	// 검색조건이 저장되지 않았다면, 추천 리스트는 null
 	@GetMapping(value = "/search/main/{userIdx}")
-	public SearchMemberProfileCardDto mainPage(@PathVariable(name = "userIdx") Long userIdx) {
+	public List<SearchMemberProfileCardDto> mainPage(@PathVariable(name = "userIdx") Long userIdx) {
 		return memberMatchingService.getUserProfileCard(userIdx);
 	}
 	
