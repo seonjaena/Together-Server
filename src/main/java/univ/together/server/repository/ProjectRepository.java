@@ -242,5 +242,35 @@ public class ProjectRepository {
 				.setParameter("project_idx", project_idx)
 				.executeUpdate();
 	}
+	// =========================================================
+	
+	// ===================== 팀원 관리 main =====================
+	public List<univ.together.server.model.SearchMember> getUserIdxByProjectIdx(Long project_idx) {
+		return em.createQuery("SELECT m.user_idx.search_member FROM Member m " + 
+							  "WHERE m.project_idx.project_idx = :project_idx", univ.together.server.model.SearchMember.class)
+				.setParameter("project_idx", project_idx)
+				.getResultList();
+	}
+	// ========================================================
+	
+	// ===================== 팀원 추방 =====================
+	public int removeMember(Long user_idx, Long project_idx) {
+		return em.createQuery("DELETE FROM Member m WHERE m.user_idx.user_idx = :user_idx AND m.project_idx.project_idx = :project_idx")
+				.setParameter("user_idx", user_idx)
+				.setParameter("project_idx", project_idx)
+				.executeUpdate();
+	}
+	// ===================================================	
+	
+	// ===================== 팀원 수정 =====================
+	public int modifyMember(Long user_idx, Long project_idx, String member_right) {
+		return em.createQuery("UPDATE Member m SET m.member_right = :member_right " + 
+							  "WHERE m.user_idx.user_idx = :user_idx AND m.project_idx.project_idx = :project_idx")
+				.setParameter("member_right", member_right)
+				.setParameter("user_idx", user_idx)
+				.setParameter("project_idx", project_idx)
+				.executeUpdate();
+	}
+	// ===================================================
 
 }

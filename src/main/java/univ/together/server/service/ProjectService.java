@@ -14,8 +14,9 @@ import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
+import univ.together.server.dto.SearchMemberProfileCardDto;
 import univ.together.server.model.Project;
-
+import univ.together.server.model.SearchMember;
 import univ.together.server.model.TagList;
 import univ.together.server.repository.ProjectRepository;
 
@@ -195,5 +196,44 @@ public class ProjectService {
 		}
 	}
 	// =========================================================
+	
+	// ===================== 팀원 관리 main =====================
+	public List<SearchMemberProfileCardDto> manageMemberMain(Long project_idx) {
+		List<SearchMemberProfileCardDto> smpcds = new ArrayList<SearchMemberProfileCardDto>();
+		List<SearchMember> sms = projectRepository.getUserIdxByProjectIdx(project_idx);
+		if(sms.size() >= 1) {
+			for(SearchMember sm : sms) {
+				smpcds.add(new SearchMemberProfileCardDto(sm));
+			}
+			return smpcds;
+		}else return null;
+	}
+	// ========================================================
+	
+	// ===================== 팀원 추방 =====================
+	@Transactional
+	public String removeMember(Long user_idx, Long project_idx) {
+		try {
+			int num = projectRepository.removeMember(user_idx, project_idx);
+			if(num == 1) { num = projectRepository.subProjectMemberNum(project_idx); }
+			else { throw new Exception(); }
+			if(num ==1) { return "success"; }
+			else { throw new Exception(); }
+		}catch(Exception e) {
+			return "fail";
+		}
+	}
+	// ===================================================
+		
+	// ===================== 팀원 수정 =====================
+	@Transactional
+	public String modifyMember(Long user_idx, Long project_idx, String member_right) {
+		try {
+			return projectRepository.modifyMember(user_idx, project_idx, member_right) == 1? "success" : "fail";
+		}catch(Exception e) {
+			return "fail";
+		}
+	}
+	// ===================================================
 	
 }

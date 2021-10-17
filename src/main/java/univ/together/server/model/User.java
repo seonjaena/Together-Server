@@ -100,6 +100,10 @@ public class User {
 	@JsonIgnore
 	private List<UserHobbyList> user_hobbies = new ArrayList<UserHobbyList>();
 	
+	@OneToOne(mappedBy = "user_idx")
+	@JsonIgnore
+	private SearchMember search_member;
+	
 	public static User createJoinUser(String user_email, String user_pw, String user_name, 
 			String user_nickname, String user_phone, LocalDate user_birth) {
 		User user = new User();

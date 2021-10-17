@@ -22,6 +22,7 @@ import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
+import univ.together.server.dto.SearchMemberProfileCardDto;
 import univ.together.server.model.TagList;
 import univ.together.server.service.ProjectService;
 
@@ -118,5 +119,28 @@ public class ProjectController {
 		return projectService.modifyProjectInfo(modifyProjectInfoDto, project_idx);
 	}
 	// =========================================================
+	
+	// ===================== 팀원 관리 main =====================
+	@GetMapping(value = "/members/{project_idx}")
+	public List<SearchMemberProfileCardDto> manageMemberMain(@PathVariable(name = "project_idx") Long project_idx) {
+		return projectService.manageMemberMain(project_idx);
+	}
+	// ========================================================
+	
+	// ===================== 팀원 추방 =====================
+	@PostMapping(value = "/removeMember/{user_idx}/{project_idx}")
+	public String removeMember(@PathVariable(name = "user_idx") Long user_idx, @PathVariable(name = "project_idx") Long project_idx) {
+		return projectService.removeMember(user_idx, project_idx);
+	}
+	// ========================================================
+	
+	// ===================== 팀원 수정 =====================
+	@PostMapping(value = "/modifyMember/{user_idx}/{project_idx}")
+	public String modifyMember(@PathVariable(name = "user_idx") Long user_idx, 
+							   @PathVariable(name = "project_idx") Long project_idx, 
+							   @RequestBody Map<String, String> member_right) {
+		return projectService.modifyMember(user_idx, project_idx, member_right.get("member_right"));
+	}
+	// ========================================================
 	
 }
