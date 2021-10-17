@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
-import univ.together.server.dto.ModifyProjectDetailInfoDto;
+import univ.together.server.dto.ModifyProjectInfoDto;
 import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
-import univ.together.server.dto.ProjectInfoDto;
+import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
 import univ.together.server.model.Project;
 
@@ -85,22 +85,6 @@ public class ProjectService {
 		return projectRepository.SearchMember(user_idx);
 	}
 	
-
-	public ProjectInfoDto getProjectInfo(Long project_idx) {
-		ProjectInfoDto projectInfoDto = null;
-		try {
-			Project projectInfos = projectRepository.getProjectInfo(project_idx);
-			projectInfoDto = new ProjectInfoDto(projectInfos);
-			projectInfoDto.setCode("success");
-			return projectInfoDto;
-		}catch(Exception e) {
-			projectInfoDto = new ProjectInfoDto();
-			projectInfoDto.setCode("error");
-			return projectInfoDto;
-		}
-	}
-	
-	
 	public Object askUserInfo(String user_nickname){
 		return projectRepository.askUserInfo(user_nickname);
 	}
@@ -155,6 +139,26 @@ public class ProjectService {
 		return code;
 	}
 	
+	public List<TagList> getTagList() {
+		return projectRepository.getTagList();
+	}
+	
+	// ===================== 나중에 삭제 =====================
+	/*
+	public ProjectInfoDto getProjectInfo(Long project_idx) {
+		ProjectInfoDto projectInfoDto = null;
+		try {
+			Project projectInfos = projectRepository.getProjectInfo(project_idx);
+			projectInfoDto = new ProjectInfoDto(projectInfos);
+			projectInfoDto.setCode("success");
+			return projectInfoDto;
+		}catch(Exception e) {
+			projectInfoDto = new ProjectInfoDto();
+			projectInfoDto.setCode("error");
+			return projectInfoDto;
+		}
+	}
+	
 	@Transactional
 	public String modifyProjectInfo(ModifyProjectDetailInfoDto modifyProjectDetailInfoDto) {
 		String code = "";
@@ -167,8 +171,29 @@ public class ProjectService {
 		}
 		return code;
 	}
+	*/
 	
-	public List<TagList> getTagList() {
-		return projectRepository.getTagList();
+	// ===================== 프로젝트 정보 얻기 =====================
+	public ProjectInformationDto getProjectInfo(Long project_idx) {
+		try {
+			return new ProjectInformationDto(projectRepository.getProjectInfo(project_idx), projectRepository.getProjectTagList(project_idx));
+		}catch(Exception e) {
+			return null;
+		}
 	}
+	// =========================================================
+	
+	// ===================== 프로젝트 정보 수정 =====================
+	@Transactional
+	public String modifyProjectInfo(ModifyProjectInfoDto modifyProjectInfoDto, Long project_idx) {
+		try {
+			int num = projectRepository.modifyProjectInfo(modifyProjectInfoDto, project_idx);
+			if(num == 1) return "success";
+			else throw new Exception();
+		}catch(Exception e) {
+			return "fail";
+		}
+	}
+	// =========================================================
+	
 }

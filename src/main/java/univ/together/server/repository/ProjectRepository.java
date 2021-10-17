@@ -6,17 +6,16 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
-import univ.together.server.dto.ModifyProjectDetailInfoDto;
+import univ.together.server.dto.ModifyProjectInfoDto;
 import univ.together.server.model.Project;
 import univ.together.server.model.ProjectSchedule;
+import univ.together.server.model.ProjectTag;
 import univ.together.server.model.TagList;
-import univ.together.server.repository.TeamMatchingRepository;
 
 @Repository
 @RequiredArgsConstructor
@@ -49,7 +48,7 @@ public class ProjectRepository {
 
 	// 멤버 초대(프로젝트 생성 당시)
 	public void inviteMember(long project_idx, List<String> invitationList) {
-		List<Long> userList = new ArrayList();
+		List<Long> userList = new ArrayList<>();
 
 		for (String nickname : invitationList) {
 			userList.add(em.createQuery("SELECT user_idx FROM User WHERE user_nickname = :invitationList", Long.class)
@@ -89,13 +88,6 @@ public class ProjectRepository {
 	}
 
 	// + 점수높은 유저 매칭
-
-	public Project getProjectInfo(Long project_idx) {
-		return em
-				.createQuery("SELECT p FROM Project p " + "WHERE p.project_idx = :project_idx "
-						+ "AND p.project_status = :project_status", Project.class)
-				.setParameter("project_idx", project_idx).setParameter("project_status", "A").getSingleResult();
-	}
 
 	public int addSchedule(AddProjectScheduleDto addProjectScheduleDto) {
 		return em.createNativeQuery("INSERT INTO project_schedule "
@@ -166,21 +158,6 @@ public class ProjectRepository {
 
 	// =========================================================================
 
-	public int modifyProjectInfo(ModifyProjectDetailInfoDto modifyProjectDetailInfoDto) {
-		return em
-				.createQuery("UPDATE Project p SET p.project_name = :project_name, " + "p.project_exp = :project_exp, "
-						+ "p.start_date = :start_date, " + "p.end_date = :end_date, "
-						+ "p.professionality = :professionality, " + "p.project_type = :project_type "
-						+ "WHERE p.project_idx = :project_idx")
-				.setParameter("project_name", modifyProjectDetailInfoDto.getProject_name())
-				.setParameter("project_exp", modifyProjectDetailInfoDto.getProject_exp())
-				.setParameter("start_date", modifyProjectDetailInfoDto.getStart_date())
-				.setParameter("end_date", modifyProjectDetailInfoDto.getEnd_date())
-				.setParameter("professionality", modifyProjectDetailInfoDto.getProfessionality())
-				.setParameter("project_type", modifyProjectDetailInfoDto.getProject_type())
-				.setParameter("project_idx", modifyProjectDetailInfoDto.getProject_idx()).executeUpdate();
-	}
-
 	public List<TagList> getTagList() {
 		return em.createQuery("SELECT t FROM TagList t ", TagList.class).getResultList();
 	}
@@ -205,6 +182,65 @@ public class ProjectRepository {
 					.setParameter("tag_idx", tid).executeUpdate();
 		}
 		// tag_list에 존재할 시 tid = x , 존재하지 않을시 tid= 0 tag_search에 추가 tag_search에서 idx 찾음
+	}
+	
+	// ===================== 나중에 삭제 =====================
+	/*
+	public Project getProjectInfo(Long project_idx) {
+		return em
+				.createQuery("SELECT p FROM Project p " + "WHERE p.project_idx = :project_idx "
+						+ "AND p.project_status = :project_status", Project.class)
+				.setParameter("project_idx", project_idx).setParameter("project_status", "A").getSingleResult();
+	}
+	
+	public int modifyProjectInfo(ModifyProjectDetailInfoDto modifyProjectDetailInfoDto) {
+		return em
+				.createQuery("UPDATE Project p SET p.project_name = :project_name, " + "p.project_exp = :project_exp, "
+						+ "p.start_date = :start_date, " + "p.end_date = :end_date, "
+						+ "p.professionality = :professionality, " + "p.project_type = :project_type "
+						+ "WHERE p.project_idx = :project_idx")
+				.setParameter("project_name", modifyProjectDetailInfoDto.getProject_name())
+				.setParameter("project_exp", modifyProjectDetailInfoDto.getProject_exp())
+				.setParameter("start_date", modifyProjectDetailInfoDto.getStart_date())
+				.setParameter("end_date", modifyProjectDetailInfoDto.getEnd_date())
+				.setParameter("professionality", modifyProjectDetailInfoDto.getProfessionality())
+				.setParameter("project_type", modifyProjectDetailInfoDto.getProject_type())
+				.setParameter("project_idx", modifyProjectDetailInfoDto.getProject_idx()).executeUpdate();
+	}
+	*/
+	
+	// ===================== 프로젝트 정보 얻기 =====================
+	public Project getProjectInfo(Long project_idx) {
+		return em.createQuery("SELECT DISTINCT p FROM Project p JOIN FETCH p.members " + 
+							  "WHERE p.project_idx = :project_idx", Project.class)
+				.setParameter("project_idx", project_idx)
+				.getSingleResult();
+	}
+	
+	public List<ProjectTag> getProjectTagList(Long project_idx) {
+		return em.createQuery("SELECT pt FROM ProjectTag pt JOIN FETCH pt.tag_idx JOIN FETCH pt.tag_search_idx " + 
+							  "WHERE pt.project_idx.project_idx = :project_idx", ProjectTag.class)
+				.setParameter("project_idx", project_idx)
+				.getResultList();
+	}
+	// =========================================================
+	
+	// ===================== 프로젝트 정보 수정 =====================
+	public int modifyProjectInfo(ModifyProjectInfoDto modifyProjectInfoDto, Long project_idx) {
+		return em.createQuery("UPDATE Project p SET " + 
+							  "p.project_exp = :project_exp, " + 
+							  "p.start_date = :start_date, " + 
+							  "p.end_date = :end_date, " + 
+							  "p.professionality = :professionality, " + 
+							  "p.project_type = :project_type WHERE " + 
+							  "p.project_idx = :project_idx")
+				.setParameter("project_exp", modifyProjectInfoDto.getProject_exp())
+				.setParameter("start_date", modifyProjectInfoDto.getStart_date())
+				.setParameter("end_date", modifyProjectInfoDto.getEnd_date())
+				.setParameter("professionality", modifyProjectInfoDto.getProfessionality())
+				.setParameter("project_type", modifyProjectInfoDto.getProject_type())
+				.setParameter("project_idx", project_idx)
+				.executeUpdate();
 	}
 
 }

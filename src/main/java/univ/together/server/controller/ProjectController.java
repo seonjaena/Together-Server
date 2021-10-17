@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
-import univ.together.server.dto.ModifyProjectDetailInfoDto;
+import univ.together.server.dto.ModifyProjectInfoDto;
 import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
-import univ.together.server.dto.ProjectInfoDto;
+import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
 import univ.together.server.model.TagList;
 import univ.together.server.service.ProjectService;
@@ -64,11 +64,6 @@ public class ProjectController {
 			return "success";
 	}
 	
-	@GetMapping(value = "/getInfo")
-	public ProjectInfoDto getProjectInfo(@RequestParam(name = "project_idx") Long project_idx) {
-		return projectService.getProjectInfo(project_idx);
-	}
-	
 	@GetMapping(value = "/UserInfo/{user_nickname}")
 	public Object askUserInfo(@PathVariable("user_nickname") String user_nickname ) {
 		return projectService.askUserInfo(user_nickname);
@@ -91,12 +86,37 @@ public class ProjectController {
 		return projectService.removeUser(project_idx, user_idx, logined_user_idx);
 	}
 	
-	@PostMapping(value = "/modiifyProjectInfo")
-	public String modifyProjectInfo(@RequestBody ModifyProjectDetailInfoDto modifyProjectDetailInfoDto) {
-		return projectService.modifyProjectInfo(modifyProjectDetailInfoDto);
-	}
 	@GetMapping(value = "/getTagList")
 	public List<TagList> getTagList() {
 		return projectService.getTagList();
 	}
+	
+	
+	// ===================== 나중에 삭제 =====================
+//	@GetMapping(value = "/getInfo")
+//	public ProjectInfoDto getProjectInfo(@RequestParam(name = "project_idx") Long project_idx) {
+//		return projectService.getProjectInfo(project_idx);
+//	}
+//	
+//	@PostMapping(value = "/modiifyProjectInfo")
+//	public String modifyProjectInfo(@RequestBody ModifyProjectDetailInfoDto modifyProjectDetailInfoDto) {
+//		return projectService.modifyProjectInfo(modifyProjectDetailInfoDto);
+//	}
+	// ====================================================
+	
+	// ===================== 프로젝트 정보 얻기 =====================
+	@GetMapping(value = "/getInfo/{project_idx}")
+	public ProjectInformationDto getProjectInfo(@PathVariable(name = "project_idx") Long project_idx) {
+		return projectService.getProjectInfo(project_idx);
+	}
+	// =========================================================
+	
+	// ===================== 프로젝트 정보 수정 =====================
+	@PostMapping(value = "/modifyInfo/{project_idx}")
+	public String modifyProjectInfo(@PathVariable(name = "project_idx") Long project_idx, 
+								  @RequestBody ModifyProjectInfoDto modifyProjectInfoDto) {
+		return projectService.modifyProjectInfo(modifyProjectInfoDto, project_idx);
+	}
+	// =========================================================
+	
 }
