@@ -254,11 +254,11 @@ public class ProjectRepository {
 	// ========================================================
 	
 	// ===================== 권한 확인 =====================
-	public Integer checkUserRight(Long user_idx, Long project_idx) {
+	public Long checkUserRight(Long user_idx, Long project_idx) {
 		return em.createQuery("SELECT COUNT(m) FROM Member m WHERE " + 
 							  "m.user_idx.user_idx = :user_idx AND " + 
 							  "m.project_idx.project_idx = :project_idx AND " + 
-							  "m.member_right = :member_right", Integer.class)
+							  "m.member_right = :member_right", Long.class)
 				.setParameter("user_idx", user_idx)
 				.setParameter("project_idx", project_idx)
 				.setParameter("member_right", "Leader")

@@ -113,10 +113,11 @@ public class ProjectController {
 	// =========================================================
 	
 	// ===================== 프로젝트 정보 수정 =====================
-	@PostMapping(value = "/modifyInfo/{project_idx}")
-	public String modifyProjectInfo(@PathVariable(name = "project_idx") Long project_idx, 
-								  @RequestBody ModifyProjectInfoDto modifyProjectInfoDto) {
-		return projectService.modifyProjectInfo(modifyProjectInfoDto, project_idx);
+	@PostMapping(value = "/modifyInfo/{user_idx}/{project_idx}")
+	public String modifyProjectInfo(@PathVariable(name = "user_idx") Long user_idx, 
+									@PathVariable(name = "project_idx") Long project_idx, 
+								    @RequestBody ModifyProjectInfoDto modifyProjectInfoDto) {
+		return projectService.modifyProjectInfo(modifyProjectInfoDto, user_idx, project_idx);
 	}
 	// =========================================================
 	

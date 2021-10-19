@@ -186,11 +186,15 @@ public class ProjectService {
 	
 	// ===================== 프로젝트 정보 수정 =====================
 	@Transactional
-	public String modifyProjectInfo(ModifyProjectInfoDto modifyProjectInfoDto, Long project_idx) {
+	public String modifyProjectInfo(ModifyProjectInfoDto modifyProjectInfoDto, Long user_idx, Long project_idx) {
 		try {
-			int num = projectRepository.modifyProjectInfo(modifyProjectInfoDto, project_idx);
-			if(num == 1) return "success";
-			else throw new Exception();
+			if(projectRepository.checkUserRight(user_idx, project_idx) == 1) {
+				int num = projectRepository.modifyProjectInfo(modifyProjectInfoDto, project_idx);
+				if(num == 1) return "success";
+				else throw new Exception();
+			}else {
+				return "not_leader";
+			}
 		}catch(Exception e) {
 			return "fail";
 		}
