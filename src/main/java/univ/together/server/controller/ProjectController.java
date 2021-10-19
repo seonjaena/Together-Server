@@ -128,18 +128,21 @@ public class ProjectController {
 	// ========================================================
 	
 	// ===================== 팀원 추방 =====================
-	@PostMapping(value = "/removeMember/{user_idx}/{project_idx}")
-	public String removeMember(@PathVariable(name = "user_idx") Long user_idx, @PathVariable(name = "project_idx") Long project_idx) {
-		return projectService.removeMember(user_idx, project_idx);
+	@PostMapping(value = "/removeMember/{user_idx}/{target_idx}/{project_idx}")
+	public String removeMember(@PathVariable(name = "user_idx") Long user_idx, 
+							   @PathVariable(name = "target_idx") Long target_idx,
+							   @PathVariable(name = "project_idx") Long project_idx) {
+		return projectService.removeMember(user_idx, target_idx, project_idx);
 	}
 	// ========================================================
 	
 	// ===================== 팀원 수정 =====================
-	@PostMapping(value = "/modifyMember/{user_idx}/{project_idx}")
+	@PostMapping(value = "/modifyMember/{user_idx}/{target_idx}/{project_idx}")
 	public String modifyMember(@PathVariable(name = "user_idx") Long user_idx, 
+							   @PathVariable(name = "target_idx") Long target_idx, 
 							   @PathVariable(name = "project_idx") Long project_idx, 
 							   @RequestBody Map<String, String> member_right) {
-		return projectService.modifyMember(user_idx, project_idx, member_right.get("member_right"));
+		return projectService.modifyMember(user_idx, target_idx, project_idx, member_right.get("member_right"));
 	}
 	// ========================================================
 	

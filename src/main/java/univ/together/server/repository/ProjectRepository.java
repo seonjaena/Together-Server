@@ -253,21 +253,34 @@ public class ProjectRepository {
 	}
 	// ========================================================
 	
-	// ===================== 팀원 추방 =====================
-	public int removeMember(Long user_idx, Long project_idx) {
-		return em.createQuery("DELETE FROM Member m WHERE m.user_idx.user_idx = :user_idx AND m.project_idx.project_idx = :project_idx")
+	// ===================== 권한 확인 =====================
+	public Integer checkUserRight(Long user_idx, Long project_idx) {
+		return em.createQuery("SELECT COUNT(m) FROM Member m WHERE " + 
+							  "m.user_idx.user_idx = :user_idx AND " + 
+							  "m.project_idx.project_idx = :project_idx AND " + 
+							  "m.member_right = :member_right", Integer.class)
 				.setParameter("user_idx", user_idx)
+				.setParameter("project_idx", project_idx)
+				.setParameter("member_right", "Leader")
+				.getSingleResult();
+	}
+	// ===================================================
+	
+	// ===================== 팀원 추방 =====================
+	public int removeMember(Long target_idx, Long project_idx) {
+		return em.createQuery("DELETE FROM Member m WHERE m.user_idx.user_idx = :user_idx AND m.project_idx.project_idx = :project_idx")
+				.setParameter("user_idx", target_idx)
 				.setParameter("project_idx", project_idx)
 				.executeUpdate();
 	}
 	// ===================================================	
 	
 	// ===================== 팀원 수정 =====================
-	public int modifyMember(Long user_idx, Long project_idx, String member_right) {
+	public int modifyMember(Long target_idx, Long project_idx, String member_right) {
 		return em.createQuery("UPDATE Member m SET m.member_right = :member_right " + 
 							  "WHERE m.user_idx.user_idx = :user_idx AND m.project_idx.project_idx = :project_idx")
 				.setParameter("member_right", member_right)
-				.setParameter("user_idx", user_idx)
+				.setParameter("user_idx", target_idx)
 				.setParameter("project_idx", project_idx)
 				.executeUpdate();
 	}

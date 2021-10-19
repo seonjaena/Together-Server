@@ -212,13 +212,17 @@ public class ProjectService {
 	
 	// ===================== 팀원 추방 =====================
 	@Transactional
-	public String removeMember(Long user_idx, Long project_idx) {
+	public String removeMember(Long user_idx, Long target_idx, Long project_idx) {
 		try {
-			int num = projectRepository.removeMember(user_idx, project_idx);
-			if(num == 1) { num = projectRepository.subProjectMemberNum(project_idx); }
-			else { throw new Exception(); }
-			if(num ==1) { return "success"; }
-			else { throw new Exception(); }
+			if(projectRepository.checkUserRight(user_idx, project_idx) == 1) {
+				int num = projectRepository.removeMember(target_idx, project_idx);
+				if(num == 1) { num = projectRepository.subProjectMemberNum(project_idx); }
+				else { throw new Exception(); }
+				if(num ==1) { return "success"; }
+				else { throw new Exception(); }
+			}else {
+				return "not_leader";
+			}
 		}catch(Exception e) {
 			return "fail";
 		}
@@ -227,9 +231,13 @@ public class ProjectService {
 		
 	// ===================== 팀원 수정 =====================
 	@Transactional
-	public String modifyMember(Long user_idx, Long project_idx, String member_right) {
+	public String modifyMember(Long user_idx, Long target_idx, Long project_idx, String member_right) {
 		try {
-			return projectRepository.modifyMember(user_idx, project_idx, member_right) == 1? "success" : "fail";
+			if(projectRepository.checkUserRight(user_idx, project_idx) == 1) {
+				return projectRepository.modifyMember(target_idx, project_idx, member_right) == 1? "success" : "fail";
+			}else {
+				return "not_leader";
+			}
 		}catch(Exception e) {
 			return "fail";
 		}
