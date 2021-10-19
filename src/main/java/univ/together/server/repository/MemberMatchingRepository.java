@@ -109,9 +109,9 @@ public class MemberMatchingRepository {
 				.setParameter("main_addr", memberSearchingDto.getMain_addr())
 				.setParameter("reference_addr", memberSearchingDto.getReference_addr())
 				.setParameter("user_idx", user_idx)
-				.setParameter("hobby_small_idx1", memberSearchingDto.getLicense().get(0))
-				.setParameter("hobby_small_idx2", memberSearchingDto.getLicense().get(1))
-				.setParameter("hobby_small_idx3", memberSearchingDto.getLicense().get(2))
+				.setParameter("hobby_small_idx1", memberSearchingDto.getHobby_small_idx().get(0))
+				.setParameter("hobby_small_idx2", memberSearchingDto.getHobby_small_idx().get(1))
+				.setParameter("hobby_small_idx3", memberSearchingDto.getHobby_small_idx().get(2))
 				.executeUpdate();
 	}
 	

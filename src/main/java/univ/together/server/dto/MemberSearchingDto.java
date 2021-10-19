@@ -32,9 +32,9 @@ public class MemberSearchingDto {
 		if(sc.getLicense3() != null && !sc.getLicense3().equals("")) this.license.add(sc.getLicense3());
 		if(sc.getMain_addr() != null && !sc.getMain_addr().equals("")) this.main_addr = sc.getMain_addr();
 		if(sc.getReference_addr() != null && !sc.getReference_addr().equals("")) this.reference_addr = sc.getReference_addr();
-		if(sc.getHobby_small_idx1() != null && !sc.getLicense1().equals("")) this.hobby_small_idx.add(sc.getHobby_small_idx1());
-		if(sc.getHobby_small_idx2() != null && !sc.getLicense2().equals("")) this.hobby_small_idx.add(sc.getHobby_small_idx2());
-		if(sc.getHobby_small_idx3() != null && !sc.getLicense3().equals("")) this.hobby_small_idx.add(sc.getHobby_small_idx3());
+		if(sc.getHobby_small_idx1() != null && !sc.getHobby_small_idx1().equals("")) this.hobby_small_idx.add(sc.getHobby_small_idx1());
+		if(sc.getHobby_small_idx2() != null && !sc.getHobby_small_idx2().equals("")) this.hobby_small_idx.add(sc.getHobby_small_idx2());
+		if(sc.getHobby_small_idx3() != null && !sc.getHobby_small_idx3().equals("")) this.hobby_small_idx.add(sc.getHobby_small_idx3());
 	}
 	
 }

@@ -96,14 +96,13 @@ public class MemberMatchingService {
 		List<SearchMemberProfileCardDto> resultList = new ArrayList<SearchMemberProfileCardDto>();
 		List<SearchMemberProfileCardDto> list = new ArrayList<SearchMemberProfileCardDto>();
 		for (SearchMember searchMember : cardList) {
-			
 			if(searchMember.getUser_idx().getUser_age() >= memberSearchingDto.getMin_age() && 
 					searchMember.getUser_idx().getUser_age() <= memberSearchingDto.getMax_age()) {
 				num += 1;
 			}
-			
 			if(memberSearchingDto.getLicense().size() >= 1) {
 				for(String license : memberSearchingDto.getLicense()) {
+					if(license == null || license.equals("")) continue;
 					if(license.equals(searchMember.getUser_idx().getLicense1()) || 
 						license.equals(searchMember.getUser_idx().getLicense2()) || 
 						license.equals(searchMember.getUser_idx().getLicense3())) {
@@ -111,11 +110,6 @@ public class MemberMatchingService {
 					}
 				}
 			}
-			
-			/*
-			 searchMember.getUser_idx().getAddress() != null && !memberSearchingDto.getMain_addr().equals("") && 
-					!memberSearchingDto.getReference_addr().equals("") && memberSearchingDto.getReference_addr() != null 
-			 */
 			
 			if(searchMember.getUser_idx().getAddress() != null && 
 					!searchMember.getUser_idx().getAddress().getMain_addr().equals("") && 
