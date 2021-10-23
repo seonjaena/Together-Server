@@ -30,7 +30,6 @@ public class MemberMatchingController {
 	// 검색조건이 저장되지 않았다면, 추천 리스트는 null
 	@GetMapping(value = "/search/main/{userIdx}")
 	public List<SearchMemberProfileCardDto> mainPage(@PathVariable(name = "userIdx") Long userIdx) {
-		System.out.println("여기 찍나요");
 		return memberMatchingService.getUserProfileCard(userIdx);
 	}
 	

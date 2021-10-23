@@ -36,6 +36,7 @@ public class MemberMatchingService {
 			searchMemberProfileCardDtoreturn = new SearchMemberProfileCardDto(memberMatchingRepository.getUserProfileCard(userIdx));
 			returnList.add(searchMemberProfileCardDtoreturn);
 		}catch(Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -46,6 +47,7 @@ public class MemberMatchingService {
 			}
 			return returnList;
 		}catch(Exception e) {
+			e.printStackTrace();
 			return returnList;
 		}
 	}
@@ -116,8 +118,8 @@ public class MemberMatchingService {
 					!searchMember.getUser_idx().getAddress().getReference_addr().equals("") && 
 					searchMember.getUser_idx().getAddress().getMain_addr() != null && 
 					searchMember.getUser_idx().getAddress().getReference_addr() != null && 
-					!memberSearchingDto.getMain_addr().equals("") && !memberSearchingDto.getReference_addr().equals("") && 
-					memberSearchingDto.getMain_addr() != null && memberSearchingDto.getReference_addr() != null) {
+					memberSearchingDto.getMain_addr() != null && memberSearchingDto.getReference_addr() != null &&
+					!memberSearchingDto.getMain_addr().equals("") && !memberSearchingDto.getReference_addr().equals("")) {
 				if(searchMember.getUser_idx().getAddress().getMain_addr().equals(memberSearchingDto.getMain_addr())) {
 					num += 1;
 					if(searchMember.getUser_idx().getAddress().getReference_addr().equals(memberSearchingDto.getReference_addr())) {
