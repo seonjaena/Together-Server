@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
 import univ.together.server.dto.ModifyProjectInfoDto;
+import univ.together.server.model.Member;
 import univ.together.server.model.Project;
 import univ.together.server.model.ProjectSchedule;
 import univ.together.server.model.ProjectTag;
@@ -245,9 +246,13 @@ public class ProjectRepository {
 	// =========================================================
 	
 	// ===================== 팀원 관리 main =====================
-	public List<univ.together.server.model.SearchMember> getUserIdxByProjectIdx(Long project_idx) {
-		return em.createQuery("SELECT m.user_idx.search_member FROM Member m " + 
-							  "WHERE m.project_idx.project_idx = :project_idx", univ.together.server.model.SearchMember.class)
+	public List<Member> getUserIdxByProjectIdx(Long project_idx) {
+//		return em.createQuery("SELECT m.user_idx.search_member FROM Member m " + 
+//							  "WHERE m.project_idx.project_idx = :project_idx", univ.together.server.model.SearchMember.class)
+//				.setParameter("project_idx", project_idx)
+//				.getResultList();
+		return em.createQuery("SELECT m FROM Member m JOIN FETCH m.user_idx " + 
+							  "WHERE m.project_idx.project_idx = :project_idx", Member.class)
 				.setParameter("project_idx", project_idx)
 				.getResultList();
 	}

@@ -9,14 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
+import univ.together.server.dto.ManageProjectMemberDto;
 import univ.together.server.dto.ModifyProjectInfoDto;
 import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
-import univ.together.server.dto.SearchMemberProfileCardDto;
+import univ.together.server.model.Member;
 import univ.together.server.model.Project;
-import univ.together.server.model.SearchMember;
 import univ.together.server.model.TagList;
 import univ.together.server.repository.ProjectRepository;
 
@@ -202,14 +202,14 @@ public class ProjectService {
 	// =========================================================
 	
 	// ===================== 팀원 관리 main =====================
-	public List<SearchMemberProfileCardDto> manageMemberMain(Long project_idx) {
-		List<SearchMemberProfileCardDto> smpcds = new ArrayList<SearchMemberProfileCardDto>();
-		List<SearchMember> sms = projectRepository.getUserIdxByProjectIdx(project_idx);
-		if(sms.size() >= 1) {
-			for(SearchMember sm : sms) {
-				smpcds.add(new SearchMemberProfileCardDto(sm));
+	public List<ManageProjectMemberDto> manageMemberMain(Long project_idx) {
+		List<ManageProjectMemberDto> mpmd = new ArrayList<ManageProjectMemberDto>();
+		List<Member> members = projectRepository.getUserIdxByProjectIdx(project_idx);
+		if(members.size() >= 1) {
+			for(Member member : members) {
+				mpmd.add(new ManageProjectMemberDto(member));
 			}
-			return smpcds;
+			return mpmd;
 		}else return null;
 	}
 	// ========================================================

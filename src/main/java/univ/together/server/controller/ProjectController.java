@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
+import univ.together.server.dto.ManageProjectMemberDto;
 import univ.together.server.dto.ModifyProjectInfoDto;
 import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
-import univ.together.server.dto.SearchMemberProfileCardDto;
 import univ.together.server.model.TagList;
 import univ.together.server.service.ProjectService;
 
@@ -123,7 +123,7 @@ public class ProjectController {
 	
 	// ===================== 팀원 관리 main =====================
 	@GetMapping(value = "/members/{project_idx}")
-	public List<SearchMemberProfileCardDto> manageMemberMain(@PathVariable(name = "project_idx") Long project_idx) {
+	public List<ManageProjectMemberDto> manageMemberMain(@PathVariable(name = "project_idx") Long project_idx) {
 		return projectService.manageMemberMain(project_idx);
 	}
 	// ========================================================
