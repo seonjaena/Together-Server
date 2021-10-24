@@ -145,6 +145,19 @@ public class ProjectController {
 							   @RequestBody Map<String, String> member_right) {
 		return projectService.modifyMember(user_idx, target_idx, project_idx, member_right.get("member_right"));
 	}
-	// ========================================================
+	// ===================================================
+	
+	// ===================== 태그 삭제 =====================
+	@PostMapping(value = "/deleteProjectTag/{projectIdx}/{userIdx}/{projectTagIdx}")
+	public String deleteProjectTag(@PathVariable(name = "projectIdx") Long projectIdx, 
+								 @PathVariable(name = "userIdx") Long userIdx, 
+								 @PathVariable(name = "projectTagIdx") Long projectTagIdx) {
+		return projectService.deleteProjectTag(projectIdx, userIdx, projectTagIdx);
+	}
+	// ===================================================
+	
+	// ===================== 태그 수정 =====================
+	
+	// ===================================================
 	
 }

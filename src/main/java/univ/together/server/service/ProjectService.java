@@ -248,4 +248,17 @@ public class ProjectService {
 	}
 	// ===================================================
 	
+	// ===================== 태그 삭제 =====================
+	@Transactional
+	public String deleteProjectTag(Long project_idx, Long user_idx, Long project_tag_idx) {
+		try {
+			if(projectRepository.checkUserRight(user_idx, project_idx) != 1) return "not_leader";
+			if(projectRepository.deleteProjectTag(project_tag_idx) != 1) throw new Exception();
+			return "success";
+		}catch(Exception e) {
+			return "fail";
+		}
+	}
+	// ===================================================
+	
 }

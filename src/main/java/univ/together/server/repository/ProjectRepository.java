@@ -290,5 +290,13 @@ public class ProjectRepository {
 				.executeUpdate();
 	}
 	// ===================================================
+	
+	// ===================== 태그 삭제 =====================
+	public int deleteProjectTag(Long project_tag_idx) {
+		return em.createQuery("DELETE FROM ProjectTag pt WHERE pt.project_tag_idx = :project_tag_idx")
+				.setParameter("project_tag_idx", project_tag_idx)
+				.executeUpdate();
+	}
+	// ===================================================
 
 }
