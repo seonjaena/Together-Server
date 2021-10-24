@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
+import univ.together.server.dto.AddProjectTagDto;
 import univ.together.server.dto.ManageProjectMemberDto;
 import univ.together.server.dto.ModifyProjectInfoDto;
 import univ.together.server.dto.ProjectDetailScheduleDto;
@@ -254,6 +255,27 @@ public class ProjectService {
 		try {
 			if(projectRepository.checkUserRight(user_idx, project_idx) != 1) return "not_leader";
 			if(projectRepository.deleteProjectTag(project_tag_idx) != 1) throw new Exception();
+			return "success";
+		}catch(Exception e) {
+			return "fail";
+		}
+	}
+	// ===================================================
+	
+	// ===================== 태그 추가 =====================
+	@Transactional
+	public String addProjectTag(AddProjectTagDto addProjectTagDto, Long project_idx, Long user_idx) {
+		if(projectRepository.checkUserRight(user_idx, project_idx) != 1) return "not_leader";
+		try {
+			if(addProjectTagDto.getTag_idx() == 0) {
+				// 비정규 데이터(tag_search)
+				if(projectRepository.addSearchTag(addProjectTagDto.getTag_name(), addProjectTagDto.getTag_detail_name()) != 1) throw new Exception();
+				Long tag_search_idx = projectRepository.getSearchTagIdx(addProjectTagDto.getTag_name(), addProjectTagDto.getTag_detail_name()).get(0);
+				if(projectRepository.addProjectTag(project_idx, 0L, tag_search_idx) != 1) throw new Exception();
+			}else {
+				// 정규 데이터
+				if(projectRepository.addProjectTag(project_idx, addProjectTagDto.getTag_idx(), 0L) != 1) throw new Exception();
+			}
 			return "success";
 		}catch(Exception e) {
 			return "fail";

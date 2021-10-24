@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
+import univ.together.server.dto.AddProjectTagDto;
 import univ.together.server.dto.ManageProjectMemberDto;
 import univ.together.server.dto.ModifyProjectInfoDto;
 import univ.together.server.dto.ProjectDetailScheduleDto;
@@ -156,8 +157,13 @@ public class ProjectController {
 	}
 	// ===================================================
 	
-	// ===================== 태그 수정 =====================
-	
+	// ===================== 태그 추가 =====================
+	@PostMapping(value = "/addProjectTag/{projectIdx}/{userIdx}")
+	public String addProjectTag(@PathVariable(name = "projectIdx") Long projectIdx, 
+							  @PathVariable(name = "userIdx") Long userIdx, 
+							  @RequestBody AddProjectTagDto addProjectTagDto) {
+		return projectService.addProjectTag(addProjectTagDto, projectIdx, userIdx);
+	}
 	// ===================================================
 	
 }

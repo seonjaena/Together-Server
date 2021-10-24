@@ -298,5 +298,38 @@ public class ProjectRepository {
 				.executeUpdate();
 	}
 	// ===================================================
+	
+	// ===================== 비정규 태그 추가 =====================
+	public int addSearchTag(String search_name, String search_detail_name) {
+		return em.createNativeQuery("INSERT INTO tag_search (search_name, search_detail_name) " + 
+									"VALUES(:search_name, :search_detail_name)")
+				.setParameter("search_name", search_name)
+				.setParameter("search_detail_name", search_detail_name)
+				.executeUpdate();
+	}
+	// ========================================================
+	
+	// ===================== 비정규 태그 찾기 =====================
+	public List<Long> getSearchTagIdx(String search_name, String search_detail_name) {
+		return em.createQuery("SELECT ts.tag_search_idx FROM TagSearch ts WHERE " + 
+							  "ts.search_name = :search_name AND ts.search_detail_name = :search_detail_name " + 
+							  "ORDER BY ts.tag_search_idx DESC", Long .class)
+				.setParameter("search_name", search_name)
+				.setParameter("search_detail_name", search_detail_name)
+				.setFirstResult(0)
+				.setMaxResults(1)
+				.getResultList();
+	}
+	// ========================================================
+	
+	// ===================== 태그 추가 =====================
+	public int addProjectTag(Long project_idx, Long tag_idx, Long tag_search_idx) {
+		return em.createNativeQuery("INSERT INTO project_tag (project_idx, tag_idx, tag_search_idx) VALUES(:project_idx, :tag_idx, :tag_search_idx)")
+				.setParameter("project_idx", project_idx)
+				.setParameter("tag_idx", tag_idx)
+				.setParameter("tag_search_idx", tag_search_idx)
+				.executeUpdate();
+	}
+	// ===================================================
 
 }
