@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import univ.together.server.dto.LoginUserDto;
 import univ.together.server.dto.MyPageMainDto;
 import univ.together.server.dto.PrivateScheduleListDto;
 import univ.together.server.dto.ShowInvitationDto;
+import univ.together.server.dto.UserListDto;
 import univ.together.server.dto.UserProfileDto;
 import univ.together.server.model.User;
 import univ.together.server.model.UserValidation;
@@ -698,6 +700,27 @@ public class UserService {
 		else code = "fail";
 		return code;
 	}
+	
+	// ===================== 유저 리스트 =====================
+	public Map<String, Object> getUserList(Long user_idx, Long project_idx) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			Long rowNum = userRepository.checkMemberRight(user_idx, project_idx);
+			if(rowNum != 1) {
+				resultMap.put("code", "not_leader");
+				resultMap.put("result", null);
+				return resultMap;
+			}
+			List<UserListDto> userList = userRepository.getUserList(project_idx).stream().map(u -> new UserListDto(u)).collect(Collectors.toList());
+			resultMap.put("code", "success");
+			resultMap.put("result", userList);
+		}catch(Exception e) {
+			resultMap.put("code", "fail");
+			resultMap.put("result", null);
+		}
+		return resultMap;
+	}
+	// ====================================================
 	
 	@Transactional
 	@Scheduled(cron = "0 30 3 * * *")

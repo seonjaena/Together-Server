@@ -428,6 +428,28 @@ public class UserRepository {
 	}
 	
 	// ====================================== 초대 수락/거부 기능 END ======================================
+	
+	// ===================== 권한 확인 =====================
+	public Long checkMemberRight(Long user_idx, Long project_idx) {
+		return em.createQuery("SELECT COUNT(m) FROM Member m WHERE " + 
+							  "m.user_idx.user_idx = :user_idx AND " + 
+							  "m.project_idx.project_idx = :project_idx AND " + 
+							  "m.member_right = :member_right", Long.class)
+				.setParameter("user_idx", user_idx)
+				.setParameter("project_idx", project_idx)
+				.setParameter("member_right", "Leader")
+				.getSingleResult();
+	}
+	// ===================================================
+	
+	// ===================== 유저 리스트 =====================
+	public List<User> getUserList(Long project_idx) {
+		return em.createQuery("SELECT DISTINCT m.user_idx FROM Member m " + 
+							  "WHERE m.project_idx.project_idx != :project_idx", User.class)
+				.setParameter("project_idx", project_idx)
+				.getResultList();
+	}
+	// ====================================================
 
 	
 	// ====================================== 서비스 최근 이용 날짜가 190일이 넘은 유저를 비활성화 한다. ======================================

@@ -1,6 +1,7 @@
 package univ.together.server.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -232,5 +233,12 @@ public class UserController {
 	public String decideJoin(@RequestBody DecideJoinProjectDto decideJoinProjectDto) {
 		return userService.decideJoin(decideJoinProjectDto);
 	}
+	
+	// ===================== 유저 리스트 =====================
+	@PostMapping(value = "/getUsers/{userIdx}/{projectIdx}")
+	public Map<String, Object> getUserList(@PathVariable(name = "userIdx") Long userIdx, @PathVariable(name = "projectIdx") Long projectIdx) {
+		return userService.getUserList(userIdx, projectIdx);
+	}
+	// ====================================================
 	
 }
