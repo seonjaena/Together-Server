@@ -16,6 +16,9 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url 'https://repository.aspose.com/repo/'
+	}
 }
 
 dependencies {
@@ -38,6 +41,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation group: 'com.aspose', name: 'aspose-words', version: '18.9', classifier: 'jdk16'
+	implementation group: 'com.aspose', name: 'aspose-slides', version: '21.10', classifier: 'jdk16'
 }
 
 test {
