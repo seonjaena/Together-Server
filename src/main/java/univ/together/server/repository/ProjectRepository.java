@@ -17,6 +17,7 @@ import univ.together.server.model.Project;
 import univ.together.server.model.ProjectSchedule;
 import univ.together.server.model.ProjectTag;
 import univ.together.server.model.TagList;
+import univ.together.server.model.TeamApplication;
 
 @Repository
 @RequiredArgsConstructor
@@ -332,4 +333,16 @@ public class ProjectRepository {
 	}
 	// ===================================================
 
+	public List<TeamApplication> getApplicationList(Long project_idx){
+		return em.createQuery("SELECT t FROM TeamApplication t WHERE t.project_idx.project_idx = :project_idx",TeamApplication.class).setParameter("project_idx", project_idx).getResultList();
+	}
+	
+	public void rejectApplication(Long team_application_idx) {
+		em.createNativeQuery("DELETE FROM team_application WHERE team_application_idx = :team_application_idx").setParameter("team_application_idx", team_application_idx).executeUpdate();
+	}
+	public void allowApplication(Long team_application_idx, Long project_idx, Long user_idx) {
+		em.createNativeQuery("DELETE FROM team_application WHERE team_application_idx = :team_application_idx").setParameter("team_application_idx", team_application_idx).executeUpdate();
+		em.createNativeQuery("INSERT INTO member(project_idx, user_idx, member_right) VALUES(:project_idx, :user_idx, 'Member')").setParameter("project_idx", project_idx)
+		.setParameter("user_idx", user_idx).executeUpdate();
+	}
 }

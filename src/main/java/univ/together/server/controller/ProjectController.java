@@ -25,6 +25,7 @@ import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
 import univ.together.server.model.TagList;
+import univ.together.server.model.TeamApplication;
 import univ.together.server.service.ProjectService;
 
 @RestController
@@ -166,4 +167,13 @@ public class ProjectController {
 	}
 	// ===================================================
 	
+	@GetMapping(value="/applicationList")
+	public List<TeamApplication> getApplicationList(Long project_idx){
+		return projectService.getApplicationList(project_idx);
+	}
+	
+	@GetMapping(value="/applicationList/process")
+	public void processApplication(@RequestParam Long team_application_idx, @RequestParam Long user_idx,  @RequestParam Long project_idx, @RequestParam char flag) {
+		projectService.processApplication(team_application_idx, user_idx, project_idx, flag);
+	}
 }

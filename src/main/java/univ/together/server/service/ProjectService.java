@@ -19,6 +19,7 @@ import univ.together.server.dto.ProjectScheduleDto;
 import univ.together.server.model.Member;
 import univ.together.server.model.Project;
 import univ.together.server.model.TagList;
+import univ.together.server.model.TeamApplication;
 import univ.together.server.repository.ProjectRepository;
 
 @Service
@@ -283,4 +284,16 @@ public class ProjectService {
 	}
 	// ===================================================
 	
+	public List<TeamApplication>getApplicationList(Long project_idx) {
+		return projectRepository.getApplicationList(project_idx);
+	}
+	
+	@Transactional
+	public void processApplication(Long team_application_idx, Long user_idx, Long project_idx, char flag) {
+		if(flag == 'Y') {
+			projectRepository.allowApplication(team_application_idx, project_idx, user_idx);
+		}else {
+			projectRepository.rejectApplication(team_application_idx);
+		}
+	}
 }

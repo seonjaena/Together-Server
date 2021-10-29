@@ -1,5 +1,6 @@
 package univ.together.server.repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
@@ -13,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.CreateCardDto;
 import univ.together.server.dto.Pair;
 import univ.together.server.dto.ProjectCardDto;
-import univ.together.server.dto.TeamSearchingDto;
+import univ.together.server.dto.SearchingTableDto;
 import univ.together.server.model.Project;
+import univ.together.server.model.ProjectCard;
+import univ.together.server.model.TeamSearchCondition;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,41 +33,58 @@ public class TeamMatchingRepository {
 //	}
 //	
 	
-	//Card가지고있는팀
+	//팀카드를 가지고 있는 서치가능한 팀리스트
 	public List<Long> findSearchAvailableProject(Long user_idx) {
-		return em.createQuery("SELECT p.project_idx FROM Project p JOIN Member m ON m.project_idx = p.project_idx WHERE p.open_flag = 'Y' AND m.user_idx.user_idx = :user_idx AND p.project_status='A'",Long.class)
+		return em.createQuery("SELECT p.project_idx FROM Project p JOIN Member m ON m.project_idx.project_idx = p.project_idx WHERE p.open_flag = 'Y' AND m.user_idx.user_idx = :user_idx AND p.project_status='A'",Long.class)
 				.setParameter("user_idx", user_idx).getResultList();
 	}
 	
-	//projectInfo
-	public Project getProjectInfo(String project_name) {
-		System.out.println(project_name);
-		return em.createQuery("SELECT p FROM Project p WHERE p.project_name = :project_name AND p.project_status='A' ",Project.class).setParameter("project_name", project_name).getSingleResult();
+	//projectCardList 리턴
+		public ProjectCardDto getTeamMatchingInfo(Long project_idx) {
+			
+			System.out.println("repo");
+			Project p = em.createQuery("SELECT p FROM Project p WHERE p.project_idx = :project_idx AND project_status='A' ",Project.class).setParameter("project_idx", project_idx).getSingleResult();
+			System.out.println("p err");
+			String comment = em.createQuery("SELECT pc.comment FROM ProjectCard pc WHERE pc.project_idx.project_idx = :project_idx AND pc.project_idx.project_status='A' ",String.class).setParameter("project_idx", project_idx).getSingleResult();
+			System.out.println("c err");
+			ProjectCardDto pc = new ProjectCardDto(p,comment);
+			System.out.println("dto err");
+			return pc;
+		}
+		
+	/*
+	 * private Long project_idx;
+	private String project_name;
+	private String project_exp;
+	private LocalDate start_date;
+	private LocalDate end_date;
+	private String professionality;
+	private String project_type;
+	private int member_num;
+	private String comment;
+	 */
+		
+		
+	//projectCard 모두 리턴
+	public List<ProjectCardDto> getProjectCardList(Long user_idx) {
+		List<ProjectCard> pc = em.createQuery("SELECT pc FROM ProjectCard pc",ProjectCard.class).getResultList();
+		
+		
+		return pc.stream().map(c -> new ProjectCardDto(c)).collect(Collectors.toList());
+		
 	}
-	
+	// 카드 만들기
 	public void completeCreateCard(CreateCardDto ccd) {
 		em.createQuery("UPDATE Project p SET p.open_flag='Y' WHERE p.project_idx = :project_idx").setParameter("project_idx", ccd.getProject_idx()).executeUpdate();
-		
+		System.out.println("asd");
 		em.createNativeQuery("INSERT INTO project_card(project_idx, comment) VALUES(:project_idx, :comment)").
-		setParameter("project_idx", ccd.getProject_idx()).setParameter("project_idx", ccd.getComment()).executeUpdate();
+		setParameter("project_idx", ccd.getProject_idx()).setParameter("comment", ccd.getComment()).executeUpdate();
 	}
 	
-	//projectCardList
-	public ProjectCardDto getTeamMatchingInfo(Long project_idx) {
-		
-		System.out.println("repo");
-		Project p = em.createQuery("SELECT p FROM Project p WHERE p.project_idx = :project_idx AND project_status='A' ",Project.class).setParameter("project_idx", project_idx).getSingleResult();
-		System.out.println("p err");
-		String comment = em.createQuery("SELECT pc.comment FROM ProjectCard pc WHERE pc.project_idx.project_idx = :project_idx AND pc.project_idx.project_status='A' ",String.class).setParameter("project_idx", project_idx).getSingleResult();
-		System.out.println("c err");
-		ProjectCardDto pc = new ProjectCardDto(p,comment);
-		System.out.println("dto err");
-		return pc;
-	}
 	
-	//card없는팀
-	public List<String> findSearchNotAvailableProject(Long user_idx){
-		return em.createQuery("SELECT p.project_name FROM Project p JOIN Member m ON m.project_idx = p.project_idx WHERE p.open_flag='N' AND m.user_idx.user_idx = :user_idx AND project_status='A' ",String.class)
+	//card없는팀 (카드 만들때 사용)
+	public List<Project> findSearchNotAvailableProject(Long user_idx){
+		return em.createQuery("SELECT p FROM Project p JOIN Member m ON m.project_idx = p.project_idx WHERE p.open_flag='N' AND m.user_idx.user_idx = :user_idx AND project_status='A' ",Project.class)
 				.setParameter("user_idx", user_idx).getResultList();
 	}
 	
@@ -98,43 +118,72 @@ public class TeamMatchingRepository {
 				.setFirstResult(0).setMaxResults(1).getSingleResult();
 	}
 
-	public List<String> teamSearching(TeamSearchingDto teammatchingdto, ArrayList<Pair> tag_idx) {
-		// 상관없음 추가해야함 + 프로젝트 태그 관련
-//		private Long user_idx;
-//		private int tag_num;
-//		private String tag[] = new String[tag_num];
-//		private String detail[] = new String[tag_num];
-//		private LocalDate start_date;
-//		private LocalDate end_date;
-//		private String professionality;
-//		private String project_type;
-//		private int member_num;
-//		private String mbti;
-		
-		
-		String str = "SELECT p.project_name FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality Like :professionality AND "
-				+ "p.project_type Like: project_type AND p.project_start_date >= :project_start_date AND p.project_end_date"
-				+ "<= :project_end_date";
-
-		while (!tag_idx.isEmpty()) {
-			if (tag_idx.get(0).getX() == 0) {
-				str = str + " AND t.tag_search_idx.tag_search_idx =" + tag_idx.get(0).getY();
-			} else {
-				str = str + " AND t.tag_idx.tag_idx =" + tag_idx.get(0).getX();
-			}
-			tag_idx.remove(0);
+	public List<ProjectCardDto> teamSearching(Long user_idx) {
+		int n;
+		Long tag_idx;
+		TeamSearchCondition t = null;
+		List<Long> p = new ArrayList<>();
+		List <ProjectCardDto> list = new ArrayList<>();
+		try {
+			t = em.createQuery("SELECT t FROM TeamSearchCondition t WHERE t.user_idx.user_idx = :user_idx",TeamSearchCondition.class).setParameter("user_idx", user_idx).getSingleResult();
 		}
-		
-
-		return em.createQuery(str, String.class)
-				.setParameter("professionality", '%' + teammatchingdto.getProfessionality())
-				.setParameter("project_type", '%' + teammatchingdto.getProject_type())
-				.setParameter("project_start_date", teammatchingdto.getStart_date())
-				.setParameter("project_end_date", teammatchingdto.getEnd_date()).getResultList();
+		catch(Exception e) {
+			return new ArrayList<>();
+		}
+		try {
+			tag_idx = getTagIdx(t.getTag_name(), t.getTag_detail_name());
+			n=0;
+		}catch(Exception e) {
+			tag_idx = getTagSearchIdx(t.getTag_name(), t.getTag_detail_name());
+			n=1;
+		}
+		if(n==0) {
+			 p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
+					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
+					+ " AND t.tag_idx.tag_idx = :tag_idx",Long.class).setParameter("professionality", t.getProfessionality())
+			.setParameter("project_type", t.getProject_type())
+			.setParameter("project_start_date", t.getStart_date())
+			.setParameter("project_end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
+		}else {
+			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
+					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
+					+ " AND t.tag_search_idx.tag_search_idx = :tag_idx",Long.class).setParameter("professionality", t.getProfessionality())
+			.setParameter("project_type", t.getProject_type())
+			.setParameter("project_start_date", t.getStart_date())
+			.setParameter("project_end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
+		}
+		for(Long a : p) {
+			list.add(getTeamMatchingInfo(a));
+		}
+		return list;
+	
+				
 		// 값이 없으면 다른값으로 추가
 	}
 	
 	
-	
-	
+	//서치 테이블 저장
+	public void saveSearchingTable(SearchingTableDto searchingtabledto ) {
+		em.createNativeQuery("INSERT INTO team_search_condition(user_idx, start_date, end_date, professionality, project_type, tag_name, tag_detail_name, member_num) VALUES(:user_idx"
+				+ ", :start_date, :end_date, :professionality, :project_type, :tag_name, :tag_detail_name, :member_num)").setParameter("user_idx", searchingtabledto.getUser_idx())
+		.setParameter("start_date", searchingtabledto.getStart_date()).setParameter("end_date", searchingtabledto.getEnd_date())
+		.setParameter("professionality", searchingtabledto.getProfessionality())
+		.setParameter("project_type", searchingtabledto.getProject_type()).setParameter("tag_name", searchingtabledto.getTag_name())
+		.setParameter("tag_detail_name", searchingtabledto.getTag_detail_name()).executeUpdate();// date 상관없을때 디폴트값 넣어주기
+	}
+	// 지원서 제출
+	public String submitApplication(Long user_idx, Long project_idx) {
+		Long n = em.createQuery("SELECT COUNT(m) FROM Member m WHERE m.project_idx.project_idx = :project_idx AND m.user_idx.user_idx = :user_idx",Long.class).setParameter("project_idx", project_idx)
+		.setParameter("user_idx", user_idx).getSingleResult();
+		
+		Long m = em.createQuery("SELECT COUNT(t) FROM TeamApplication t WHERE t.user_idx.user_idx = :user_idx AND t.project_idx,project_idx = :project_idx",Long.class).setParameter("user_idx", user_idx)
+				.setParameter("project_idx", project_idx).getSingleResult();
+		
+		if(n >= 1 || m >= 1) {
+			return "failed";
+		}
+		
+		em.createNativeQuery("INSERT INTO team_application(user_idx, project_idx) VALUES(:user_idx, project_idx)").setParameter("user_idx", user_idx).setParameter("project_idx", project_idx).executeUpdate();
+		return "success";
+	}
 }
