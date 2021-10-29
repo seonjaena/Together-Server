@@ -76,11 +76,24 @@ public class TeamMatchingRepository {
 	// 카드 만들기
 	public void completeCreateCard(CreateCardDto ccd) {
 		em.createQuery("UPDATE Project p SET p.open_flag='Y' WHERE p.project_idx = :project_idx").setParameter("project_idx", ccd.getProject_idx()).executeUpdate();
-		System.out.println("asd");
-		em.createNativeQuery("INSERT INTO project_card(project_idx, comment) VALUES(:project_idx, :comment)").
-		setParameter("project_idx", ccd.getProject_idx()).setParameter("comment", ccd.getComment()).executeUpdate();
-	}
+		
+		try {
+			em.createQuery("SELECT pc FROM ProjectCard pc WHERE pc.project_idx.project_idx = :project_idx").setParameter("project_idx", ccd.getProject_idx()).getSingleResult();
+			em.createQuery("UPDATE ProjectCard pc SET pc.comment = :comment WHERE pc.project_idx.project_idx = :project_idx").setParameter("comment", ccd.getComment())
+			.setParameter("project_idx", ccd.getProject_idx()).executeUpdate();
+		}
+		catch(Exception e) {
+			
+			em.createNativeQuery("INSERT INTO project_card(project_idx, comment) VALUES(:project_idx, :comment)").
+			setParameter("project_idx", ccd.getProject_idx()).setParameter("comment", ccd.getComment()).executeUpdate();		
+		}
 	
+	}
+	//카드 삭제
+	public void deleteCard(Long project_idx) {
+		em.createQuery("DELETE FROM ProjectCard pc WHERE pc.project_idx.project_idx = :project_idx").setParameter("project_idx", project_idx).executeUpdate();
+		em.createQuery("UPDATE Project p SET p.open_flag='N' WHERE p.project_idx = :project_idx").setParameter("project_idx", project_idx).executeUpdate();
+	}
 	
 	//card없는팀 (카드 만들때 사용)
 	public List<Project> findSearchNotAvailableProject(Long user_idx){

@@ -62,7 +62,7 @@ public class ProjectService {
 				.end_date(projectdto.getEnd_date())
 				.professionality(projectdto.getProfessionality())
 				.project_type(projectdto.getProject_type())
-				.open_flag("Y")
+				.open_flag("N")
 				.build();
 		
 		Long pid = projectRepository.CreateProject(project);

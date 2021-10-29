@@ -42,6 +42,10 @@ public class TeamMatchingService {
 		teammatchingRepository.completeCreateCard(ccd);
 	}
 	
+	@Transactional
+	public void deleteCard(Long project_idx) {
+		teammatchingRepository.deleteCard(project_idx);
+	}
 	
 	public List<ProjectCardDto> teamMatchingMain(Long user_idx) {
 		List<Long>project_idx_list = new ArrayList<>();
@@ -72,7 +76,7 @@ public class TeamMatchingService {
 	public void saveSearchingTable(SearchingTableDto searchingtabledto) {
 		teammatchingRepository.saveSearchingTable(searchingtabledto);
 	}
-	
+	@Transactional
 	public String submitApplication(Long user_idx, Long project_idx) {
 		return teammatchingRepository.submitApplication(user_idx,project_idx);
 	}

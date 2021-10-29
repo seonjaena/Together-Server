@@ -51,6 +51,16 @@ public class TeamMatchingController { // 매칭에 필요한 정보 : 프로젝�
 		return "success";
 	}
 	
+	@GetMapping(value="/card/disable")
+	public String deleteCard(Long project_idx) {
+		try {
+			matchingService.deleteCard(project_idx);
+		}
+		catch(Exception e) {
+			return "failed";
+		}
+		return "success";
+	}
 	
 	
 	@GetMapping(value="/team/condition")
