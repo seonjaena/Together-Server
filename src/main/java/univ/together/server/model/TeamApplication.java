@@ -22,9 +22,9 @@ public class TeamApplication {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name= "USER_IDX")
-	private Long user_idx;
+	private User user_idx;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_TYPE")
-	private Long project_idx;
+	private Project project_idx;
 }

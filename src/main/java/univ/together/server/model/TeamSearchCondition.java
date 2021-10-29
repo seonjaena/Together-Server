@@ -23,7 +23,7 @@ public class TeamSearchCondition {
 	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_IDX")
-	private Long user_idx;
+	private User user_idx;
 	
 	@Column(name = "START_DATE")
 	private LocalDate start_date;
