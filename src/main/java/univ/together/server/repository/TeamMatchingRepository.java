@@ -175,15 +175,15 @@ public class TeamMatchingRepository {
 	public String submitApplication(Long user_idx, Long project_idx) {
 		Long n = em.createQuery("SELECT COUNT(m) FROM Member m WHERE m.project_idx.project_idx = :project_idx AND m.user_idx.user_idx = :user_idx",Long.class).setParameter("project_idx", project_idx)
 		.setParameter("user_idx", user_idx).getSingleResult();
-		
-		Long m = em.createQuery("SELECT COUNT(t) FROM TeamApplication t WHERE t.user_idx.user_idx = :user_idx AND t.project_idx,project_idx = :project_idx",Long.class).setParameter("user_idx", user_idx)
+		System.out.println("asd");
+		Long m = em.createQuery("SELECT COUNT(t) FROM TeamApplication t WHERE t.user_idx.user_idx = :user_idx AND t.project_idx.project_idx = :project_idx",Long.class).setParameter("user_idx", user_idx)
 				.setParameter("project_idx", project_idx).getSingleResult();
-		
+		System.out.println("qwe");
 		if(n >= 1 || m >= 1) {
 			return "failed";
 		}
 		
-		em.createNativeQuery("INSERT INTO team_application(user_idx, project_idx) VALUES(:user_idx, project_idx)").setParameter("user_idx", user_idx).setParameter("project_idx", project_idx).executeUpdate();
+		em.createNativeQuery("INSERT INTO team_application(user_idx, project_idx) VALUES(:user_idx, :project_idx)").setParameter("user_idx", user_idx).setParameter("project_idx", project_idx).executeUpdate();
 		return "success";
 	}
 }

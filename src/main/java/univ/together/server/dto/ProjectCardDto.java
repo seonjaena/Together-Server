@@ -22,8 +22,8 @@ public class ProjectCardDto {
 	private int member_num;
 	private String comment;
 	 
-	private List<Pair> tag= new ArrayList<>();
-	
+	private List<String> tag= new ArrayList<>();
+	private List<String> tag_detail = new ArrayList<>();
 	public ProjectCardDto(ProjectCard pc) {
 		this.project_idx = pc.getProject_idx().getProject_idx();
 		this.project_name=pc.getProject_idx().getProject_name();
@@ -49,10 +49,12 @@ public class ProjectCardDto {
 		
 		for (ProjectTag t : p.getTags()) {
 			if(t.getTag_search_idx().getTag_search_idx()==0) {
-				tag.add(new Pair(t.getTag_idx().getTag_name(),t.getTag_idx().getTag_detail_name()));
+				tag.add(t.getTag_idx().getTag_name());
+				tag_detail.add(t.getTag_idx().getTag_detail_name());
 			}
 			else {
-				tag.add(new Pair(t.getTag_search_idx().getSearch_name(), t.getTag_search_idx().getSearch_detail_name()));
+				tag.add(t.getTag_search_idx().getSearch_name());
+				tag_detail.add(t.getTag_search_idx().getSearch_detail_name());
 			}
 		}
 		
@@ -71,10 +73,12 @@ public class ProjectCardDto {
 		
 		for (ProjectTag t : p.getTags()) {
 			if(t.getTag_search_idx().getTag_search_idx()==0) {
-				tag.add(new Pair(t.getTag_idx().getTag_name(),t.getTag_idx().getTag_detail_name()));
+				tag.add(t.getTag_idx().getTag_name());
+				tag_detail.add(t.getTag_idx().getTag_detail_name());
 			}
 			else {
-				tag.add(new Pair(t.getTag_search_idx().getSearch_name(), t.getTag_search_idx().getSearch_detail_name()));
+				tag.add(t.getTag_search_idx().getSearch_name());
+				tag_detail.add(t.getTag_search_idx().getSearch_detail_name());
 			}
 		}
 		

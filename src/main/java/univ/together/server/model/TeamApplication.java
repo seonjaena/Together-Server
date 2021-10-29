@@ -25,6 +25,6 @@ public class TeamApplication {
 	private User user_idx;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name = "PROJECT_TYPE")
+	@JoinColumn(name = "PROJECT_IDX")
 	private Project project_idx;
 }
