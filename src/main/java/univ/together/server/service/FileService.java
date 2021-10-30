@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,8 +34,28 @@ public class FileService {
 	private final PasswordEncoder passwordEncoder;
 
 	public List<FileListDto> getFileList(Long project_idx) {
-		return fileRepository.getFileList(project_idx).stream().map(f -> new FileListDto(f))
-				.collect(Collectors.toList());
+//		return fileRepository.getFileList(project_idx).stream().map(f -> new FileListDto(f))
+//				.collect(Collectors.toList());
+		
+		// 파일 리스트
+		List<File> files = fileRepository.getFileListV2(project_idx);
+		// file_idx리스트
+		List<Long> file_idxes = new ArrayList<Long>();
+		
+		for(int i = 0; i < files.size(); i++) file_idxes.add(files.get(i).getFile_idx());
+		
+		// return 해줄 DTO리스트
+		List<FileListDto> fileListDtos = new ArrayList<FileListDto>();
+		// 파일 리스트에 맞는 파일 버전 리스트
+		Map<Long, Long> versions = fileRepository.getFileVersions(file_idxes);
+		
+		if(files.size() == versions.size()) {
+			for(int i = 0; i < files.size(); i++) {
+				fileListDtos.add(new FileListDto(files.get(i), versions.get(files.get(i).getFile_idx())));
+			}
+		}
+		
+		return fileListDtos;
 	}
 
 	public List getFileVersionInfo(Long file_idx) {

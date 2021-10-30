@@ -2,8 +2,11 @@
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Tuple;
 
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +30,28 @@ public class FileRepository {
 				"SELECT f FROM File f WHERE f.project_idx.project_idx = :project_idx AND f.com_delete_flag = :com_delete_flag",
 				File.class).setParameter("project_idx", project_idx).setParameter("com_delete_flag", "N")
 				.getResultList();
+	}
+	
+	public List<File> getFileListV2(Long project_idx) {
+		return em.createQuery("SELECT f FROM File f WHERE f.project_idx.project_idx = :project_idx AND " + 
+							  "f.com_delete_flag = :com_delete_flag", File.class)
+				.setParameter("project_idx", project_idx)
+				.setParameter("com_delete_flag", "N")
+				.getResultList();
+	}
+	
+	public Map<Long, Long> getFileVersions(List<Long> file_idxes) {
+		return em.createQuery("SELECT fv.file_idx.file_idx AS fileIdx, COUNT(fv) AS count FROM FileVersion fv " + 
+							  "GROUP BY fv.file_idx.file_idx " + 
+							  "HAVING fv.file_idx.file_idx IN (:file_idxes)", Tuple.class)
+				.setParameter("file_idxes", file_idxes)
+				.getResultStream()
+				.collect(
+					Collectors.toMap(
+						tuple -> (Long) tuple.get("fileIdx"), 
+						tuple -> (Long) tuple.get("count")
+					)
+				);
 	}
 
 	public List getFileVersionInfo(Long file_idx) {

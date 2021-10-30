@@ -20,6 +20,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:///usr/local/univ_project_image/");
+        registry.addResourceHandler("/file_down/**")
+        		.addResourceLocations("file:///usr/local/Together/");
 
     }
 
