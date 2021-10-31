@@ -131,10 +131,30 @@ public class TeamMatchingRepository {
 				.setFirstResult(0).setMaxResults(1).getSingleResult();
 	}
 
+	public List<ProjectCardDto> searchingMain(SearchingTableDto dto){
+		List<ProjectCardDto> list = new ArrayList<>();
+		List<Long> p = new ArrayList<>();
+		try {
+			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
+					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num"
+					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag = 'Y' ",Long.class).setParameter("professionality", dto.getProfessionality())
+			.setParameter("project_type", dto.getProject_type())
+			.setParameter("project_start_date", dto.getStart_date())
+			.setParameter("project_end_date", dto.getEnd_date()).setParameter("tag_idx", getTagIdx(dto.getTag_name(),dto.getTag_detail_name())).getResultList();
+		}catch(Exception e) {
+			return new ArrayList<>();
+		}
+		for( Long a : p) {
+			list.add(getTeamMatchingInfo(a));
+		}
+		return list;
+	}
 	public List<ProjectCardDto> teamSearching(Long user_idx) {
+		int m=0;
 		int n;
 		Long tag_idx;
 		TeamSearchCondition t = null;
+		ProjectCardDto pc;
 		List<Long> p = new ArrayList<>();
 		List <ProjectCardDto> list = new ArrayList<>();
 		try {
@@ -153,20 +173,26 @@ public class TeamMatchingRepository {
 		if(n==0) {
 			 p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
 					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
-					+ " AND t.tag_idx.tag_idx = :tag_idx",Long.class).setParameter("professionality", t.getProfessionality())
+					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag ='Y' ",Long.class).setParameter("professionality", t.getProfessionality())
 			.setParameter("project_type", t.getProject_type())
 			.setParameter("project_start_date", t.getStart_date())
 			.setParameter("project_end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
 		}else {
 			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
 					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
-					+ " AND t.tag_search_idx.tag_search_idx = :tag_idx",Long.class).setParameter("professionality", t.getProfessionality())
+					+ " AND t.tag_search_idx.tag_search_idx = :tag_idx AND open_flag = 'Y' ",Long.class).setParameter("professionality", t.getProfessionality())
 			.setParameter("project_type", t.getProject_type())
 			.setParameter("project_start_date", t.getStart_date())
 			.setParameter("project_end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
 		}
 		for(Long a : p) {
-			list.add(getTeamMatchingInfo(a));
+			if(m==3) {
+				break;
+			}
+			pc = getTeamMatchingInfo(a);
+			pc.setMy_flag(0);
+			list.add(pc);
+			m++;
 		}
 		return list;
 	

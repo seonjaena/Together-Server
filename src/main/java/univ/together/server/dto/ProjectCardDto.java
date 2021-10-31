@@ -21,7 +21,8 @@ public class ProjectCardDto {
 	private String project_type;
 	private int member_num;
 	private String comment;
-	 
+	private int my_flag=1;
+	
 	private List<String> tag= new ArrayList<>();
 	private List<String> tag_detail = new ArrayList<>();
 	public ProjectCardDto(ProjectCard pc) {

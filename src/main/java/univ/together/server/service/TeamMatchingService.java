@@ -65,6 +65,7 @@ public class TeamMatchingService {
 		}catch (Exception e) {
 			return new ArrayList<ProjectCardDto>();
 		}
+		card_list.addAll(teammatchingRepository.teamSearching(user_idx));
 		return card_list;
 	}
 	
@@ -75,6 +76,10 @@ public class TeamMatchingService {
 	@Transactional
 	public void saveSearchingTable(SearchingTableDto searchingtabledto) {
 		teammatchingRepository.saveSearchingTable(searchingtabledto);
+	}
+	
+	public List<ProjectCardDto> searchingMain(SearchingTableDto dto){
+		return teammatchingRepository.searchingMain(dto);
 	}
 	@Transactional
 	public String submitApplication(Long user_idx, Long project_idx) {

@@ -1,10 +1,12 @@
 package univ.together.server.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +43,7 @@ public class TeamMatchingController { // 매칭에 필요한 정보 : 프로젝�
 	
 	//CompleteCreateCard
 	@PostMapping(value="/projectList/card/build") //project_idx & comment
-	public String completeCreateCard(@ModelAttribute CreateCardDto ccd) {
+	public String completeCreateCard(@RequestBody CreateCardDto ccd) {
 		try {
 		matchingService.completeCreateCard(ccd);
 		}catch(Exception e) {
@@ -69,13 +71,13 @@ public class TeamMatchingController { // 매칭에 필요한 정보 : 프로젝�
 	}
 	
 	@PostMapping(value="/team/condition/table")
-	public String saveSearchingTable(@ModelAttribute SearchingTableDto searchingtabledto) {
+	public List<ProjectCardDto> saveSearchingTable(@RequestBody SearchingTableDto searchingtabledto) {
 		try {
 		matchingService.saveSearchingTable(searchingtabledto);
 		}catch(Exception e) {
-			return "failed";
+			return new ArrayList<>();
 		}
-		return "success";
+		return matchingService.searchingMain(searchingtabledto);
 	}
 	
 	@GetMapping(value="/team/application")
