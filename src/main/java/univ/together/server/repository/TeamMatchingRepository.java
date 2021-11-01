@@ -134,21 +134,28 @@ public class TeamMatchingRepository {
 	public List<ProjectCardDto> searchingMain(SearchingTableDto dto){
 		List<ProjectCardDto> list = new ArrayList<>();
 		List<Long> p = new ArrayList<>();
+		int m=0;
 		try {
-			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
+			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= :project_status AND p.professionality = :professionality AND "
 					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num"
-					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag = 'Y' ",Long.class).setParameter("professionality", dto.getProfessionality())
+					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag = :open_flag ",Long.class).setParameter("professionality", dto.getProfessionality())
 			.setParameter("project_type", dto.getProject_type())
-			.setParameter("project_start_date", dto.getStart_date())
-			.setParameter("project_end_date", dto.getEnd_date()).setParameter("tag_idx", getTagIdx(dto.getTag_name(),dto.getTag_detail_name())).getResultList();
+			.setParameter("start_date", dto.getStart_date()).setParameter("project_status", 'A').setParameter("open_flag", 'Y')
+			.setParameter("end_date", dto.getEnd_date()).setParameter("tag_idx", getTagIdx(dto.getTag_name(),dto.getTag_detail_name()))
+			.setParameter("member_num", dto.getMember_num()).getResultList();
 		}catch(Exception e) {
 			return new ArrayList<>();
 		}
 		for( Long a : p) {
+			if(m==3) {
+				break;
+			}
 			list.add(getTeamMatchingInfo(a));
+			m++;
 		}
 		return list;
 	}
+	
 	public List<ProjectCardDto> teamSearching(Long user_idx) {
 		int m=0;
 		int n;
@@ -157,6 +164,8 @@ public class TeamMatchingRepository {
 		ProjectCardDto pc;
 		List<Long> p = new ArrayList<>();
 		List <ProjectCardDto> list = new ArrayList<>();
+		
+		
 		try {
 			t = em.createQuery("SELECT t FROM TeamSearchCondition t WHERE t.user_idx.user_idx = :user_idx",TeamSearchCondition.class).setParameter("user_idx", user_idx).getSingleResult();
 		}
@@ -170,20 +179,22 @@ public class TeamMatchingRepository {
 			tag_idx = getTagSearchIdx(t.getTag_name(), t.getTag_detail_name());
 			n=1;
 		}
-		if(n==0) {
-			 p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
+		if(n==0) { //any Like 공백 
+			 p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= :project_status AND p.professionality = :professionality AND "
 					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
-					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag ='Y' ",Long.class).setParameter("professionality", t.getProfessionality())
-			.setParameter("project_type", t.getProject_type())
-			.setParameter("project_start_date", t.getStart_date())
-			.setParameter("project_end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
+					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag =:open_flag ",Long.class).setParameter("professionality", t.getProfessionality()).setParameter("open_flag", 'Y')
+					 .setParameter("project_status", 'A')
+			.setParameter("project_type", t.getProject_type()).setParameter("member_num", t.getMember_num())
+			.setParameter("start_date", t.getStart_date())
+			.setParameter("end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
 		}else {
-			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= 'A' AND p.professionality = :professionality AND "
+			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= :project_status AND p.professionality = :professionality AND "
 					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
-					+ " AND t.tag_search_idx.tag_search_idx = :tag_idx AND open_flag = 'Y' ",Long.class).setParameter("professionality", t.getProfessionality())
-			.setParameter("project_type", t.getProject_type())
-			.setParameter("project_start_date", t.getStart_date())
-			.setParameter("project_end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
+					+ " AND t.tag_search_idx.tag_search_idx = :tag_idx AND open_flag = :open_flag ",Long.class).setParameter("professionality", t.getProfessionality())
+			.setParameter("project_type", t.getProject_type()).setParameter("project_status", 'A').setParameter("open_flag", 'Y')
+			.setParameter("member_num", t.getMember_num())
+			.setParameter("start_date", t.getStart_date())
+			.setParameter("end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
 		}
 		for(Long a : p) {
 			if(m==3) {
@@ -203,6 +214,7 @@ public class TeamMatchingRepository {
 	
 	//서치 테이블 저장
 	public void saveSearchingTable(SearchingTableDto searchingtabledto ) {
+		em.createQuery("DELETE FROM TeamSearchCondition t WHERE t.user_idx.user_idx= :user_idx").setParameter("user_idx", searchingtabledto.getUser_idx()).executeUpdate();
 		em.createNativeQuery("INSERT INTO team_search_condition(user_idx, start_date, end_date, professionality, project_type, tag_name, tag_detail_name, member_num) VALUES(:user_idx"
 				+ ", :start_date, :end_date, :professionality, :project_type, :tag_name, :tag_detail_name, :member_num)").setParameter("user_idx", searchingtabledto.getUser_idx())
 		.setParameter("start_date", searchingtabledto.getStart_date()).setParameter("end_date", searchingtabledto.getEnd_date())
