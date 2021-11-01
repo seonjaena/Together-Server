@@ -33,10 +33,11 @@ public class TeamMatchingService {
 	public List<ProjectCardDto> CreateProjectCardMain(Long user_idx){
 		return teammatchingRepository.findSearchNotAvailableProject(user_idx).stream().map(p->new ProjectCardDto(p)).collect(Collectors.toList());
 	}
-	
+	@Transactional
 	public List<ProjectCardDto> getProjectCardList(Long user_idx) {
 		return teammatchingRepository.getProjectCardList(user_idx);
-	};
+	}
+	
 	@Transactional
 	public void completeCreateCard(CreateCardDto ccd) {
 		teammatchingRepository.completeCreateCard(ccd);
@@ -47,6 +48,7 @@ public class TeamMatchingService {
 		teammatchingRepository.deleteCard(project_idx);
 	}
 	
+	@Transactional
 	public List<ProjectCardDto> teamMatchingMain(Long user_idx) {
 		List<Long>project_idx_list = new ArrayList<>();
 		List<ProjectCardDto> card_list = new ArrayList<>();
@@ -68,7 +70,7 @@ public class TeamMatchingService {
 		card_list.addAll(teammatchingRepository.teamSearching(user_idx));
 		return card_list;
 	}
-	
+	@Transactional
 	public List<TagList> searchingTable() {
 		return projectRepository.getTagList();
 	}
@@ -85,6 +87,7 @@ public class TeamMatchingService {
 	public String submitApplication(Long user_idx, Long project_idx) {
 		return teammatchingRepository.submitApplication(user_idx,project_idx);
 	}
+	
 	
 }
 

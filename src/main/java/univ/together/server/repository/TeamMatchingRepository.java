@@ -136,11 +136,11 @@ public class TeamMatchingRepository {
 		List<Long> p = new ArrayList<>();
 		int m=0;
 		try {
-			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= :project_status AND p.professionality = :professionality AND "
-					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num"
-					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag = :open_flag ",Long.class).setParameter("professionality", dto.getProfessionality())
+			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t On t.project_idx = p.project_idx WHERE p.project_status= :project_status AND p.professionality = :professionality "
+					+ "AND p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num "
+					+ "AND t.tag_idx.tag_idx = :tag_idx AND p.open_flag = :open_flag ",Long.class).setParameter("professionality", dto.getProfessionality())
 			.setParameter("project_type", dto.getProject_type())
-			.setParameter("start_date", dto.getStart_date()).setParameter("project_status", 'A').setParameter("open_flag", 'Y')
+			.setParameter("start_date", dto.getStart_date()).setParameter("project_status", "A").setParameter("open_flag", "Y")
 			.setParameter("end_date", dto.getEnd_date()).setParameter("tag_idx", getTagIdx(dto.getTag_name(),dto.getTag_detail_name()))
 			.setParameter("member_num", dto.getMember_num()).getResultList();
 		}catch(Exception e) {
@@ -158,7 +158,6 @@ public class TeamMatchingRepository {
 	
 	public List<ProjectCardDto> teamSearching(Long user_idx) {
 		int m=0;
-		int n;
 		Long tag_idx;
 		TeamSearchCondition t = null;
 		ProjectCardDto pc;
@@ -172,30 +171,27 @@ public class TeamMatchingRepository {
 		catch(Exception e) {
 			return new ArrayList<>();
 		}
-		try {
-			tag_idx = getTagIdx(t.getTag_name(), t.getTag_detail_name());
-			n=0;
+		
+		tag_idx = getTagIdx(t.getTag_name(), t.getTag_detail_name());
+		
+		System.out.println(t.getProfessionality());
+		System.out.println(t.getProject_type());
+		System.out.println(t.getStart_date());
+		System.out.println(t.getEnd_date());
+		
+		try { // any 는 빈 공백으로 보내주세요
+			 em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t ON t.project_idx = p.project_idx WHERE p.project_status = :project_status AND p.professionality Like :professionality AND "
+						+ "p.project_type Like :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num"
+						+ " AND t.tag_idx.tag_idx = :tag_idx AND p.open_flag =:open_flag",Long.class).setParameter("professionality", "%"+t.getProfessionality()+"%").setParameter("open_flag", "Y")
+						 .setParameter("project_status", "A")
+				.setParameter("project_type", "%"+t.getProject_type()+"%").setParameter("member_num", t.getMember_num())
+				.setParameter("start_date", t.getStart_date())
+				.setParameter("end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
 		}catch(Exception e) {
-			tag_idx = getTagSearchIdx(t.getTag_name(), t.getTag_detail_name());
-			n=1;
+			System.out.println(e);
+			return new ArrayList<>();
 		}
-		if(n==0) { //any Like 공백 
-			 p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= :project_status AND p.professionality = :professionality AND "
-					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
-					+ " AND t.tag_idx.tag_idx = :tag_idx AND open_flag =:open_flag ",Long.class).setParameter("professionality", t.getProfessionality()).setParameter("open_flag", 'Y')
-					 .setParameter("project_status", 'A')
-			.setParameter("project_type", t.getProject_type()).setParameter("member_num", t.getMember_num())
-			.setParameter("start_date", t.getStart_date())
-			.setParameter("end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
-		}else {
-			p = em.createQuery("SELECT p.project_idx FROM Project p JOIN FETCH ProjectTag t WHERE p.project_status= :project_status AND p.professionality = :professionality AND "
-					+ "p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num = :member_num"
-					+ " AND t.tag_search_idx.tag_search_idx = :tag_idx AND open_flag = :open_flag ",Long.class).setParameter("professionality", t.getProfessionality())
-			.setParameter("project_type", t.getProject_type()).setParameter("project_status", 'A').setParameter("open_flag", 'Y')
-			.setParameter("member_num", t.getMember_num())
-			.setParameter("start_date", t.getStart_date())
-			.setParameter("end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
-		}
+		
 		for(Long a : p) {
 			if(m==3) {
 				break;

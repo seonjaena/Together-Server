@@ -86,4 +86,5 @@ public class Project {
 		this.open_flag=open_flag;
 		this.member_num=1;
 	}
+	
 }
