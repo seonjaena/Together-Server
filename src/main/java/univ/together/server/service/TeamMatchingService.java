@@ -55,7 +55,6 @@ public class TeamMatchingService {
 		try {
 			project_idx_list.addAll(teammatchingRepository.findSearchAvailableProject(user_idx));
 			
-			System.out.println(project_idx_list);
 		
 			for (Long idx : project_idx_list) {
 				try {
@@ -67,7 +66,9 @@ public class TeamMatchingService {
 		}catch (Exception e) {
 			return new ArrayList<ProjectCardDto>();
 		}
+		
 		card_list.addAll(teammatchingRepository.teamSearching(user_idx));
+		
 		return card_list;
 	}
 	@Transactional

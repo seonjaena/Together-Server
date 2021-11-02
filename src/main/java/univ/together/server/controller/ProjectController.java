@@ -24,6 +24,7 @@ import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
+import univ.together.server.dto.TeamApplicationDto;
 import univ.together.server.model.TagList;
 import univ.together.server.model.TeamApplication;
 import univ.together.server.service.ProjectService;
@@ -168,7 +169,7 @@ public class ProjectController {
 	// ===================================================
 	
 	@GetMapping(value="/applicationList")
-	public List<TeamApplication> getApplicationList(Long project_idx){
+	public List<TeamApplicationDto> getApplicationList(@RequestParam("project_idx") Long project_idx){
 		return projectService.getApplicationList(project_idx);
 	}
 	

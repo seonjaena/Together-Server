@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
+@Table(name="TEAM_SEARCH_CONDITION")
 @Setter(value = AccessLevel.PRIVATE)
 public class TeamSearchCondition {
 	@Id

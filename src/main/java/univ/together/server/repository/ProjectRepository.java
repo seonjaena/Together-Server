@@ -3,6 +3,7 @@ package univ.together.server.repository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import lombok.RequiredArgsConstructor;
 import univ.together.server.dto.AddProjectScheduleDto;
 import univ.together.server.dto.ModifyProjectInfoDto;
+import univ.together.server.dto.TeamApplicationDto;
 import univ.together.server.model.Member;
 import univ.together.server.model.Project;
 import univ.together.server.model.ProjectSchedule;
@@ -334,7 +336,9 @@ public class ProjectRepository {
 	// ===================================================
 
 	public List<TeamApplication> getApplicationList(Long project_idx){
+		
 		return em.createQuery("SELECT t FROM TeamApplication t WHERE t.project_idx.project_idx = :project_idx",TeamApplication.class).setParameter("project_idx", project_idx).getResultList();
+		
 	}
 	
 	public void rejectApplication(Long team_application_idx) {

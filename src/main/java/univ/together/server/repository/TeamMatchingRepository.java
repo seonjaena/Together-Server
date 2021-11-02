@@ -136,8 +136,13 @@ public class TeamMatchingRepository {
 		List<Long> p = new ArrayList<>();
 		int m=0;
 		int n=0;
+		Long tag_idx;
+		try {
+			tag_idx = getTagIdx(dto.getTag_name(), dto.getTag_detail_name());
+		}catch(Exception e) {
+			tag_idx = (long)0;
+		}
 		
-		Long tag_idx = getTagIdx(dto.getTag_name(), dto.getTag_detail_name());
 		if (tag_idx==0) {
 			n=1;
 		}
@@ -145,25 +150,34 @@ public class TeamMatchingRepository {
 		if(n==1) {
 			
 			try {
-				p = em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t On t.project_idx = p.project_idx WHERE p.project_status= :project_status AND p.professionality = :professionality "
-					+ "AND p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num "
-					+ "AND t.tag_idx.tag_idx = :tag_idx AND p.open_flag = :open_flag ",Long.class).setParameter("professionality", dto.getProfessionality())
-						.setParameter("project_type", dto.getProject_type())
-						.setParameter("start_date", dto.getStart_date()).setParameter("project_status", "A").setParameter("open_flag", "Y")
-						.setParameter("end_date", dto.getEnd_date()).setParameter("tag_idx", tag_idx)
-				.setParameter("member_num", dto.getMember_num()).getResultList();
+				p = em.createQuery("SELECT p.project_idx FROM Project p WHERE p.project_status = :project_status  AND p.member_num <= :member_num "
+				 		+ "AND p.professionality Like :professionality AND p.project_type Like :project_type"
+							+ " AND p.open_flag =:open_flag AND p.start_date >=:start_date AND p.end_date <= :end_date",Long.class)
+					.setParameter("professionality", "%"+dto.getProfessionality()+"%")
+					.setParameter("open_flag", "Y")
+					.setParameter("project_status", "A")
+					.setParameter("project_type", "%"+dto.getProject_type()+"%")
+					.setParameter("member_num", dto.getMember_num())
+					.setParameter("start_date",dto.getStart_date())
+					.setParameter("end_date", dto.getEnd_date())
+					.getResultList();
 			}catch(Exception e) {
 				return new ArrayList<>();
 			}
 		}else {
 			try {
-				p = em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t On t.project_idx = p.project_idx WHERE p.project_status= :project_status AND p.professionality = :professionality "
-					+ "AND p.project_type = :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num "
-					+ "AND p.open_flag = :open_flag ",Long.class).setParameter("professionality", dto.getProfessionality())
-						.setParameter("project_type", dto.getProject_type())
-						.setParameter("start_date", dto.getStart_date()).setParameter("project_status", "A").setParameter("open_flag", "Y")
-						.setParameter("end_date", dto.getEnd_date())
-				.setParameter("member_num", dto.getMember_num()).getResultList();
+				p= em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t ON t.project_idx.project_idx = p.project_idx WHERE p.project_status = :project_status  AND p.member_num <= :member_num "
+				 		+ "AND p.professionality Like :professionality AND p.project_type Like :project_type"
+							+ " AND p.open_flag =:open_flag AND p.start_date >=:start_date AND p.end_date <= :end_date AND t.tag_idx.tag_idx =:tag_idx",Long.class)
+					.setParameter("professionality", "%"+dto.getProfessionality()+"%")
+					.setParameter("open_flag", "Y")
+					.setParameter("project_status", "A")
+					.setParameter("project_type", "%"+dto.getProject_type()+"%")
+					.setParameter("member_num", dto.getMember_num())
+					.setParameter("start_date",dto.getStart_date())
+					.setParameter("end_date", dto.getEnd_date())
+					.setParameter("tag_idx", tag_idx)
+					.getResultList();
 			}catch(Exception e) {
 				return new ArrayList<>();
 			}
@@ -194,8 +208,12 @@ public class TeamMatchingRepository {
 		catch(Exception e) {
 			return new ArrayList<>();
 		}
-		
-		tag_idx = getTagIdx(t.getTag_name(), t.getTag_detail_name());
+		try {
+			tag_idx = getTagIdx(t.getTag_name(), t.getTag_detail_name());
+		}catch(Exception e) {
+			System.out.println("태그없음");
+			tag_idx=(long) 0;
+		}
 		if (tag_idx==0) {
 			n=1;
 		}
@@ -203,16 +221,23 @@ public class TeamMatchingRepository {
 		System.out.println(t.getProject_type());
 		System.out.println(t.getStart_date());
 		System.out.println(t.getEnd_date());
+		System.out.println(t.getMember_num());
+		System.out.println(n);
+		System.out.println("tag_idx="+tag_idx);
 		if(n==1) {
 			try { // any 는 빈 공백으로 보내주세요
-				 em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t ON t.project_idx = p.project_idx WHERE p.project_status = :project_status AND p.professionality Like :professionality AND "
-							+ "p.project_type Like :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num"
-							+ " AND p.open_flag =:open_flag",Long.class).setParameter("professionality", "%"+t.getProfessionality()+"%").setParameter("open_flag", "Y")
-							 .setParameter("project_status", "A")
-					.setParameter("project_type", "%"+t.getProject_type()+"%").setParameter("member_num", t.getMember_num())
-					.setParameter("start_date", t.getStart_date())
-					.setParameter("end_date", t.getEnd_date()).getResultList();
-			}catch(Exception e) {
+				 p = em.createQuery("SELECT p.project_idx FROM Project p WHERE p.project_status = :project_status  AND p.member_num <= :member_num "
+				 		+ "AND p.professionality Like :professionality AND p.project_type Like :project_type"
+							+ " AND p.open_flag =:open_flag AND p.start_date >=:start_date AND p.end_date <= :end_date",Long.class)
+					.setParameter("professionality", "%"+t.getProfessionality()+"%")
+					.setParameter("open_flag", "Y")
+					.setParameter("project_status", "A")
+					.setParameter("project_type", "%"+t.getProject_type()+"%")
+					.setParameter("member_num", t.getMember_num())
+					.setParameter("start_date",t.getStart_date())
+					.setParameter("end_date", t.getEnd_date())
+					.getResultList();
+				}catch(Exception e) {
 				System.out.println(e);
 				return new ArrayList<>();
 			}
@@ -220,26 +245,38 @@ public class TeamMatchingRepository {
 		else{
 			try { // any 는 빈 공백으로 보내주세요
 		
-				em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t ON t.project_idx = p.project_idx WHERE p.project_status = :project_status AND p.professionality Like :professionality AND "
-						+ "p.project_type Like :project_type AND p.start_date >= :start_date AND p.end_date <= :end_date AND p.member_num <= :member_num"
-						+ " AND t.tag_idx.tag_idx = :tag_idx AND p.open_flag =:open_flag",Long.class).setParameter("professionality", "%"+t.getProfessionality()+"%").setParameter("open_flag", "Y")
-			 		.setParameter("project_status", "A")
-					 .setParameter("project_type", "%"+t.getProject_type()+"%").setParameter("member_num", t.getMember_num())
-					.setParameter("start_date", t.getStart_date())
-					.setParameter("end_date", t.getEnd_date()).setParameter("tag_idx", tag_idx).getResultList();
+				p= em.createQuery("SELECT p.project_idx FROM Project p JOIN ProjectTag t ON t.project_idx.project_idx = p.project_idx WHERE p.project_status = :project_status  AND p.member_num <= :member_num "
+				 		+ "AND p.professionality Like :professionality AND p.project_type Like :project_type"
+							+ " AND p.open_flag =:open_flag AND p.start_date >=:start_date AND p.end_date <= :end_date AND t.tag_idx.tag_idx =:tag_idx",Long.class)
+					.setParameter("professionality", "%"+t.getProfessionality()+"%")
+					.setParameter("open_flag", "Y")
+					.setParameter("project_status", "A")
+					.setParameter("project_type", "%"+t.getProject_type()+"%")
+					.setParameter("member_num", t.getMember_num())
+					.setParameter("start_date",t.getStart_date())
+					.setParameter("end_date", t.getEnd_date())
+					.setParameter("tag_idx", tag_idx)
+					.getResultList();
 			}catch(Exception e) {
 				System.out.println(e);
 				return new ArrayList<>();
 			}
 		}
+		System.out.println("사이즈"+p.size());
 		for(Long a : p) {
 			if(m==3) {
 				break;
 			}
+			System.out.println(a);
+			try {
 			pc = getTeamMatchingInfo(a);
 			pc.setMy_flag(0);
 			list.add(pc);
+			System.out.println(pc.getStart_date());
 			m++;
+			}catch(Exception e) {
+				continue;
+			}
 		}
 		return list;
 	

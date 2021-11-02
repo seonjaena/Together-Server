@@ -2,6 +2,7 @@ package univ.together.server.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import univ.together.server.dto.ProjectDetailScheduleDto;
 import univ.together.server.dto.ProjectDto;
 import univ.together.server.dto.ProjectInformationDto;
 import univ.together.server.dto.ProjectScheduleDto;
+import univ.together.server.dto.TeamApplicationDto;
 import univ.together.server.model.Member;
 import univ.together.server.model.Project;
 import univ.together.server.model.TagList;
@@ -284,8 +286,8 @@ public class ProjectService {
 	}
 	// ===================================================
 	
-	public List<TeamApplication>getApplicationList(Long project_idx) {
-		return projectRepository.getApplicationList(project_idx);
+	public List<TeamApplicationDto>getApplicationList(Long project_idx) {
+		return projectRepository.getApplicationList(project_idx).stream().map(a-> new TeamApplicationDto(a)).collect(Collectors.toList());
 	}
 	
 	@Transactional
