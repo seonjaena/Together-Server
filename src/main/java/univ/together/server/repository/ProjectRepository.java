@@ -337,7 +337,7 @@ public class ProjectRepository {
 
 	public List<TeamApplication> getApplicationList(Long project_idx){
 		
-		return em.createQuery("SELECT t FROM TeamApplication t WHERE t.project_idx.project_idx = :project_idx",TeamApplication.class).setParameter("project_idx", project_idx).getResultList();
+		return em.createQuery("SELECT t FROM TeamApplication t JOIN FETCH t.user_idx WHERE t.project_idx.project_idx = :project_idx",TeamApplication.class).setParameter("project_idx", project_idx).getResultList();
 		
 	}
 	
