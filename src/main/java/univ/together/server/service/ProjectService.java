@@ -30,7 +30,7 @@ import univ.together.server.repository.ProjectRepository;
 public class ProjectService {
 	
 	private final ProjectRepository projectRepository;
-	public final List<String>invitationList;
+	private final List<String>invitationList;
 	
 	public List<ProjectScheduleDto> getProjectScheduleList(Long project_idx) {
 		List<ProjectScheduleDto> projectScheduleDto = null;
