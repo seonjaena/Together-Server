@@ -293,7 +293,7 @@ public class TeamMatchingRepository {
 		.setParameter("start_date", searchingtabledto.getStart_date()).setParameter("end_date", searchingtabledto.getEnd_date())
 		.setParameter("professionality", searchingtabledto.getProfessionality())
 		.setParameter("project_type", searchingtabledto.getProject_type()).setParameter("tag_name", searchingtabledto.getTag_name())
-		.setParameter("tag_detail_name", searchingtabledto.getTag_detail_name()).executeUpdate();// date 상관없을때 디폴트값 넣어주기
+		.setParameter("tag_detail_name", searchingtabledto.getTag_detail_name()).setParameter("member_num", searchingtabledto.getMember_num()).executeUpdate();// date 상관없을때 디폴트값 넣어주기
 	}
 	
 	// 지원서 제출

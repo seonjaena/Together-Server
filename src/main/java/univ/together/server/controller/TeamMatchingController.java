@@ -73,7 +73,9 @@ public class TeamMatchingController { // 매칭에 필요한 정보 : 프로젝�
 	@PostMapping(value="/team/condition/table")
 	public List<ProjectCardDto> saveSearchingTable(@RequestBody SearchingTableDto searchingtabledto) {
 		try {
-		matchingService.saveSearchingTable(searchingtabledto);
+			if(searchingtabledto.getFlag()==1) {
+				matchingService.saveSearchingTable(searchingtabledto);
+			}
 		}catch(Exception e) {
 			return new ArrayList<>();
 		}
